@@ -1,0 +1,21 @@
+{
+  "manifest_version": 2,
+  "name": "Save my tabs!",
+  "version": "1.0",
+  "description": "Save all open tabs to a bookmark folder",
+  "homepage_url": "https://example.org",
+  "icons": {
+    "32": "icons/iconfinder_tab_new_raised_18931.png"
+  },
+
+  "permissions": [
+    "bookmarks",
+    "tabs"
+  ],
+
+  "browser_action": {
+    "default_icon": "icons/iconfinder_tab_new_raised_18931.png",
+    "default_title": "Save my tabs!",
+    "default_popup": "popup/save-my-tabs.html"
+  }
+}

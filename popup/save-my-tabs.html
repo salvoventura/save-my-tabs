@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="bootstrap.min.css"/>
+    <link rel="stylesheet" href="save-my-tabs.css"/>
+  </head>
+
+  <body>
+      <div class="container">
+          <h3>Save my tabs!</h3>
+          <div>  <!-- This was a <form>, but even without a submit button it would trigger some undebuggable error. -->
+            <div class="form-group">
+              <label for="folder-list">Use existing folder</label>
+              <select id="folder-list" class="form-control"></select>
+              <small id="folder-list-help" class="form-text text-muted">Choose an existing or predefined bookmark folder from the list.</small>
+            </div>
+            <div class="form-group">
+              <label for="folder-name">Create new folder</label>
+              <input id="folder-name" type="text" class="form-control" />
+              <small id="folder-name-help" class="form-text text-muted">Type in a new folder name. Overrides the selection above.</small>
+            </div>
+            <div class="form-group">
+              <button id="btnSave" class="btn btn-primary">Save my tabs!</button>
+            </div>
+          </div>
+      </div>
+      <small class="form-text text-muted">
+      Find us on <a href="https://github.com" target="_blank">GitHub</a>.
+      </small>
+      <script src="browser-polyfill.min.js"></script>
+      <script src="save-my-tabs.js"></script>
+  </body>
+
+</html>
