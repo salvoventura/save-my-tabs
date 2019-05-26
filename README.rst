@@ -18,7 +18,7 @@ Installation
 
 Mozilla Firefox
 ===============
-`<https://addons.mozilla.org/en-US/firefox/addon/save-all-my-tabs/>`_
+`<https://addons.mozilla.org/addon/save-all-my-tabs/>`_
 
 Google Chrome
 =============
