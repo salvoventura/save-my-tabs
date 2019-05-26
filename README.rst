@@ -15,13 +15,14 @@ Anyone doing online research ends up eventually with a lot of content open acros
 ############
 Installation
 ############
-TBD
 
 Mozilla Firefox
 ===============
+`<https://addons.mozilla.org/en-US/firefox/addon/save-all-my-tabs/>`_
 
 Google Chrome
 =============
+Although the source code works on Chrome as well, I haven't published it yet.
 
 #####
 USAGE
