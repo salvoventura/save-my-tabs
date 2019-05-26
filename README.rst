@@ -28,6 +28,8 @@ USAGE
 #####
 Once installed, a new icon button will appear in the browser toolbar. The tooltip displays **Save my tabs!**. Click on the button, and a popup will open. Here you will be given the option to select an existing bookmark folder, create a new folder from a suggested preset name (in green), or use a custom folder name by typing it in the edit box. Then simply press the *Save my tabs* button and once the popup closes, the job is done!
 
+.. image:: popup-snapshot.png
+
 .. note:: Input in the **Create new folder** box will have precedence over any selected value.
 
 Preset names
