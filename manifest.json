@@ -3,7 +3,7 @@
   "name": "Save my tabs!",
   "version": "1.0",
   "description": "Save all open tabs to a bookmark folder",
-  "homepage_url": "https://example.org",
+  "homepage_url": "https://github.com/salvoventura/save-my-tabs",
   "icons": {
     "32": "icons/iconfinder_tab_new_raised_18931.png"
   },
