@@ -12,6 +12,11 @@
              - this overrides any selection on the list
            Compatible with Chrome and Firefox, via webextension-polyfill v.0.4.0
  Version : 1.0
+ Version : 1.0.2
+           Fix issue #4 (https://github.com/salvoventura/save-my-tabs/issues/4)
+               Duplicate tabs are detected by URL instead of Tab Title
+
+
 ******************************************************************************/
 "use strict";
 // https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
@@ -49,12 +54,12 @@ async function bookmarkMyTabs(folderId) {
       // get list of currently open tabs
       let openTabs = await browser.tabs.query({currentWindow: true});
       for (let tab of openTabs) {
-          allbookmarks[tab.title] = tab.url;
+          allbookmarks[tab.url] = tab.title;
       }
 
       // save all bookmarks
-      for(let thetitle in allbookmarks) {
-          let theurl = allbookmarks[thetitle];
+      for(let theurl in allbookmarks) {
+          let thetitle = allbookmarks[theurl];
           await browser.bookmarks.create({
               parentId: folderId,
               title: thetitle,
