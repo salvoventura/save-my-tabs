@@ -12,9 +12,15 @@
              - this overrides any selection on the list
            Compatible with Chrome and Firefox, via webextension-polyfill v.0.4.0
  Version : 1.0
- Version : 1.0.2
+ Version : 1.1.0
            Fix issue #4 (https://github.com/salvoventura/save-my-tabs/issues/4)
                Duplicate tabs are detected by URL instead of Tab Title
+
+           Implemented enhancement for issue #2 (https://github.com/salvoventura/save-my-tabs/issues/2)
+               Default behavior is now to append new tabs to existing folder.
+               Option given to delete all existing bookmarks if desired.
+               
+           
 
 
 ******************************************************************************/
@@ -35,20 +41,26 @@ var isFirefox = typeof InstallTrigger !== 'undefined';
 let TOOLBAR_ID = isFirefox ? "toolbar_____" : "1";
 
 
-async function bookmarkMyTabs(folderId) {
+async function bookmarkMyTabs(folderId, replaceAll) {
   /* Loop through all open tabs, and then save them in the new/existing
      bookmark toolbar subfolder selected, passed here via folderId
+     If replaceAll is true, first delete all existing bookmarks
   */
 
   // try-catch wrapper to make Chrome happy
   try {
-      let allbookmarks = {};
+      var allbookmarks = {};  // must use var instead of let because of the conditional block w/ replaceAll
 
       // get list of existing bookmarks in this folder and delete them as we go
       let existingBookmarks = await browser.bookmarks.getChildren(folderId);
       for (let existing of existingBookmarks) {
-          // allbookmarks[existing.title] = existing.url;  // this would always keep tabs that you bookmarked but now closed
-          await browser.bookmarks.remove(existing.id);
+          allbookmarks[existing.url] = existing.title;  // store existing bookmarks in global list first
+          await browser.bookmarks.remove(existing.id);  // remove from the browser
+      }
+
+      if (replaceAll) {
+          // reset the allbookmarks list
+          allbookmarks = {};
       }
 
       // get list of currently open tabs
@@ -157,9 +169,14 @@ async function onSaveBtnClick() {
           });
           folderId = bookmarkFolder.id;
       }
-      // Now use this folderId to save in it all tabs
+
+      // Check if user wants to delete existing bookmarks first
+      let replaceAll = document.getElementById("folder-replace-all").checked
+      console.log("replaceAll" + replaceAll.toString())
+
+      // Now use this folderId to save in it all tabs, and respect replaceAll user selection
       // then close the popup window (as completion indicator)
-      bookmarkMyTabs(folderId).then(()=>{window.close()});
+      bookmarkMyTabs(folderId, replaceAll).then(()=>{window.close()});
   } catch(error) {
       console.error(`An error occurred while loading existing folders: ${error.message}`);
   }
