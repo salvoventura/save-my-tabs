@@ -22,7 +22,7 @@ Mozilla Firefox
 
 Google Chrome
 =============
-Although the source code works on Chrome as well, I haven't published it yet.
+Although the source code works on Chrome as well, I haven't published it there yet.
 
 #####
 USAGE
@@ -35,9 +35,19 @@ Once installed, a new icon button will appear in the browser toolbar. The toolti
 
 .. note:: Input in the **Create new folder** box will have precedence over any selected value.
 
+Predefined bookmark folders
+===========================
+This list is taken from the browser default Bookmarks Toolbar, in the same order shown. If you would like to customize the order of this list, just rearrange the order of the folders on the Bookmarks Toolbar.
+
 Preset names
-============
-The preset names options will show up in green in the select list. You will notice that these are date-specific, which I thought would be a useful shortcut for grouping tabs in a chronological manner.
+------------
+The preset names options will show up last and in green in the select list. You will notice that these are date-specific, which I thought would be a useful shortcut for grouping tabs in a chronological manner.
+
+.. image:: popup-options-names.png
+
+Replace folder content
+======================
+By default, tabs will be *added* to existing folders; duplicates are detected based on URL. If you wish to instead completely *replace* the content of an existing bookmarks folder with the new list, check this box. Use with care.
 
 
 ###########
@@ -48,6 +58,15 @@ This is my first take at browser addon development, and while it is a very simpl
 Installation
 ============
 To install during development, please follow these excellent tutorials, one for `Chrome <https://developer.chrome.com/extensions/getstarted>`_, and one for `Mozilla Firefox <https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions>`_. 
+
+Version history
+===============
+- 1.1.0
+   - Implement enhancement #2 `Selected an existing folder to save bookmarks into will delete all the preexisting bookmarks in that folder <https://github.com/salvoventura/save-my-tabs/issues/2>`_
+   - Fix issue #4 `Misdetects duplicate tabs <https://github.com/salvoventura/save-my-tabs/issues/4>`_
+
+- 1.0.1
+   - First release
 
 
 #######
@@ -60,8 +79,4 @@ Other credits
 =============
  - Icon file (iconfinder_tab_new_raised_18931.png) 
    - **Alessandro Rei**, License GPL, *Dark Glass* icon set, https://www.iconfinder.com/icons/6203/new_raised_tab_icon
- 
-
-
-
  

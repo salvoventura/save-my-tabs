@@ -19,8 +19,8 @@
            Implemented enhancement for issue #2 (https://github.com/salvoventura/save-my-tabs/issues/2)
                Default behavior is now to append new tabs to existing folder.
                Option given to delete all existing bookmarks if desired.
-               
-           
+            
+
 
 
 ******************************************************************************/
