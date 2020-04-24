@@ -79,4 +79,9 @@ Other credits
 =============
  - Icon file (iconfinder_tab_new_raised_18931.png) 
    - **Alessandro Rei**, License GPL, *Dark Glass* icon set, https://www.iconfinder.com/icons/6203/new_raised_tab_icon
- 
+
+ - Icon file (iconfinder_history_15533.png)
+   - **Everaldo Coelho**, License GPL, *History, hourglass, time icon*, https://www.iconfinder.com/icons/15533/history_hourglass_time_icon
+
+ - Polyfill
+   - Downloaded from `<https://unpkg.com/webextension-polyfill/dist/>`_.

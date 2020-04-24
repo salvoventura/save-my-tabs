@@ -1,6 +1,7 @@
 html, body {
   padding: 5px;
   min-width:300px; /* chrome was making it too narrow */
+  min-height:auto;
 }
 
 .green {
