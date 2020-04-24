@@ -26,11 +26,34 @@
               <input id="folder-name" type="text" class="form-control" />
               <small id="folder-name-help" class="form-text text-muted">Type in a new folder name. Overrides the selection above.</small>
             </div>
+            <hr>
+            <div class="form-group">
+              <label for="autosave-switch">Enable auto-save</label>
+              <input id="autosave-switch" class="options" type="checkbox">
+              <small id="autosave-switch-help" class="form-text text-muted">Enable/disable auto-save.</small>
+            </div>
+            <div class="form-group autosave hidden">
+              <label for="autosave-list">Auto-save every</label>
+              <select id="autosave-list" class="form-control options">
+                <option value="1">1 minute</option>
+                <option value="2">2 minutes</option>
+                <option value="3">3 minutes</option>
+                <option value="4">4 minutes</option>
+                <option value="5">5 minutes</option>
+                <option value="10">10 minutes</option>
+                <option value="15">15 minutes</option>
+                <option value="20">20 minutes</option>
+                <option value="30">30 minutes</option>
+              </select>
+              <small id="autosave-list-help" class="form-text text-muted">Choose autosave frequency (minutes).</small>
+            </div>
+
             <div class="form-group">
               <button id="btnSave" class="btn btn-primary">Save my tabs!</button>
             </div>
           </div>
       </div>
+      <hr>
       <small class="form-text text-muted">
       Version 1.1.0. Find us on <a href="https://github.com/salvoventura/save-my-tabs" target="_blank">GitHub</a>.
       </small>

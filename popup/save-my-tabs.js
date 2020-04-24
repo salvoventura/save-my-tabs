@@ -137,9 +137,6 @@ async function onSaveBtnClick() {
      3. save all open tabs in it
      4. close the popup window
   */
-
-
-
   // try-catch wrapper to make Chrome happy
   try {
       // detect user's desired folder to be used and
@@ -172,7 +169,7 @@ async function onSaveBtnClick() {
 
       // Check if user wants to delete existing bookmarks first
       let replaceAll = document.getElementById("folder-replace-all").checked
-      console.log("replaceAll" + replaceAll.toString())
+      console.log("replaceAll " + replaceAll.toString())
 
       // Now use this folderId to save in it all tabs, and respect replaceAll user selection
       // then close the popup window (as completion indicator)
@@ -182,9 +179,87 @@ async function onSaveBtnClick() {
   }
 }
 
+
+async function toggleAutosaveSection() {
+  /**
+   * Event listener to update UI and save settings
+   * upon changes in autosave section.
+   */
+  let autoSaveSection = document.getElementsByClassName('autosave')[0];
+  let autoSaveSwitch = document.getElementById('autosave-switch');
+
+  if (autoSaveSwitch.checked) {
+    console.log('Autosave turned ON');
+    autoSaveSection.classList.remove('hidden');
+
+  } else {
+    console.log('Autosave turned OFF');
+    autoSaveSection.classList.add('hidden');
+
+  }
+}
+
+async function saveOptions() {
+  let is_checked = document.getElementById('autosave-switch').checked;
+  let autosave_interval = document.getElementById("autosave-list").value;
+  console.log(`Saving options as ${is_checked} and ${autosave_interval}`);
+
+  // prepare data for saving
+  let settings = {
+      autosave: is_checked,
+      interval: autosave_interval
+  } 
+  // if you do set(settings) you find two keys in storage: `autosave` and `interval`
+  // if you do set({settings}) you find ONE key `settings` with two (k,v)
+  await browser.storage.local.set({settings});
+}
+
+async function tellBackendScript() {
+  // send a message to the backend script
+  console.log('Sending wake-up message to backend');
+  await browser.runtime.sendMessage(
+    {
+      message: "Configuration was updated"
+    }
+  );
+}
+
+function all_well_log() {
+  console.log('Operation completed');
+}
+
+function some_error_log() {
+  console.log('An error occurred');
+}
+
+async function loadSavedOptions() {
+    let settings = await browser.storage.local.get("settings");
+    console.log(`Retrieved settings as ${settings.settings.autosave} ${settings.settings.interval}`)
+    
+    document.getElementById('autosave-switch').checked = settings.settings.autosave;
+    document.getElementById("autosave-list").value = settings.settings.interval;
+
+}
+  
+
 /* MAIN */
 // Prepare user interface:
 // - populate the select box in the popup
 // - attach click handler to the button
 prepareSaveFolderSelect();
+let optionElements = document.getElementsByClassName("options");
+for (let i=0; i < optionElements.length; i++ ) {
+
+  optionElements[i].addEventListener(
+      'change',
+      function() { 
+        toggleAutosaveSection()
+        .then(saveOptions(), some_error_log)
+        .then(tellBackendScript(), some_error_log)
+        .then(all_well_log, some_error_log); 
+      },
+      false
+  );
+}
 document.getElementById("btnSave").onclick = onSaveBtnClick;
+loadSavedOptions().then(toggleAutosaveSection, some_error_log);

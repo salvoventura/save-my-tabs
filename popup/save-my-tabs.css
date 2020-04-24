@@ -6,3 +6,8 @@ html, body {
 .green {
   color: #008000; /* for the predefined folder name options */
 }
+
+.hidden {
+  display:none;
+}
+
