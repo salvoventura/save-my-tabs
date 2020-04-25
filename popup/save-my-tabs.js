@@ -2,28 +2,29 @@
   Author : Salvatore Ventura <salvoventura@gmail.com>
     Date : 26 May 2019
  Purpose : Save all browser open tabs to a folder in the Bookmarks Toolbar.
-           Give options to the user on which folder to use, in particular:
-           - list of currently existing bookmark folder
-             - includes predefined names for convenience (in green), like:
-               - today's date in YYYY-mm-dd format
-               - today's date in YYYY-mm-dd HH:MM:SS
-               - 'Save my tabs!' string
-           - input field for user to write desired (new) folder name
-             - this overrides any selection on the list
-           Compatible with Chrome and Firefox, via webextension-polyfill v.0.4.0
- Version : 1.2.0
-           Implemented autosave for issue #2 (https://github.com/salvoventura/save-my-tabs/issues/2)
-               Default behavior is now to append new tabs to existing folder.
-               Option given to delete all existing bookmarks if desired.
+            Give options to the user on which folder to use, in particular:
+            - list of currently existing bookmark folder
+              - includes predefined names for convenience (in green), like:
+                - today's date in YYYY-mm-dd format
+                - today's date in YYYY-mm-dd HH:MM:SS
+                - 'Save my tabs!' string
+            - input field for user to write desired (new) folder name
+              - this overrides any selection on the list
+            Compatible with Chrome and Firefox, via webextension-polyfill v.0.4.0
 
- Version : 1.1.0
-           Fix issue #4 (https://github.com/salvoventura/save-my-tabs/issues/4)
-               Duplicate tabs are detected by URL instead of Tab Title
+  Version : 1.2.0
+            Implemented autosave for issue #1 (https://github.com/salvoventura/save-my-tabs/issues/1)
+              Default autosave folder is AUTOSAVE. User can chose whether to append or replace content.
+            Updated webextension-polyfill to v.0.6.0
+           
+  Version : 1.1.0
+            Fix issue #4 (https://github.com/salvoventura/save-my-tabs/issues/4)
+              Duplicate tabs are detected by URL instead of Tab Title
 
-           Implemented enhancement for issue #2 (https://github.com/salvoventura/save-my-tabs/issues/2)
-               Default behavior is now to append new tabs to existing folder.
-               Option given to delete all existing bookmarks if desired.
- Version : 1.0
+            Implemented enhancement for issue #2 (https://github.com/salvoventura/save-my-tabs/issues/2)
+              Default behavior is now to append new tabs to existing folder.
+              Option given to delete all existing bookmarks if desired.
+  Version : 1.0
             
 
 
@@ -68,8 +69,32 @@ async function bookmarkMyTabs(folderId, replaceAll) {
           allbookmarks = {};
       }
 
+      /**
+       * IMPORTANT
+       * tabs.query returns a list of tabs.
+       *    'currentWindow: true' means "only pick tabs in the current window"
+       * 
+       * This is ok if you only have ONE browser window. If you have more windows open
+       * then there might be a disaster
+       * 
+       * Scenario
+       *  - multiple browser windows open
+       *  - use the overwrite options
+       *  - User presses "save tabs" on window 1: list of tabs gets saved
+       *  - User moves to window 2, and presses "save tabs" to same folder as above
+       * 
+       * Result
+       *  - only tabs from Window 2 have been persisted
+       * 
+       * It's a tricky situation. I'd rather have more than lost something.
+       * We will remove the filter.
+       * 
+       */
+      
+      
       // get list of currently open tabs
-      let openTabs = await browser.tabs.query({currentWindow: true});
+      // let openTabs = await browser.tabs.query({currentWindow: true});
+      let openTabs = await browser.tabs.query();  // from any open window
       for (let tab of openTabs) {
           allbookmarks[tab.url] = tab.title;
       }

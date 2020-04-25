@@ -26,6 +26,10 @@ async function messageHandler(request, sender, sendResponse) {
 async function initializeAlarms() {
   /**
    * Retrieve saved options and initialize alarms accordingly
+   * 
+   * TODO: maybe set defaults. First run, this will error out,
+   *       which is harmless: no settings, no autosave; but it
+   *       gets enabled once you check the autosave box.
    */
 
   // try-catch wrapper to make Chrome happy
@@ -66,6 +70,8 @@ async function bookmarkMyTabs(folderId, replaceAll) {
 
   // try-catch wrapper to make Chrome happy
   try {
+      console.log('Starting bookmarkMyTabs');
+
       var allbookmarks = {};  // must use var instead of let because of the conditional block w/ replaceAll
 
       // get list of existing bookmarks in this folder and delete them as we go
@@ -80,15 +86,39 @@ async function bookmarkMyTabs(folderId, replaceAll) {
           allbookmarks = {};
       }
 
+      /**
+       * IMPORTANT
+       * tabs.query returns a list of tabs.
+       *    'currentWindow: true' means "only pick tabs in the current window"
+       * 
+       * This is ok if you only have ONE browser window. If you have more windows open
+       * then there might be a disaster
+       * 
+       * Scenario
+       *  - multiple browser windows open
+       *  - use the overwrite options
+       *  - User presses "save tabs" on window 1: list of tabs gets saved
+       *  - User moves to window 2, and presses "save tabs" to same folder as above
+       * 
+       * Result
+       *  - only tabs from Window 2 have been persisted
+       * 
+       * It's a tricky situation. I'd rather have more than lost something.
+       * We will remove the filter or give a warning option to users.
+       * 
+       */
+      
+      
       // get list of currently open tabs
-      let openTabs = await browser.tabs.query({currentWindow: true});
+      // let openTabs = await browser.tabs.query({currentWindow: true});
+      let openTabs = await browser.tabs.query();  // from any open window
       for (let tab of openTabs) {
-          allbookmarks[tab.url] = tab.title;
+        allbookmarks[tab.url] = tab.title;
       }
 
       // save all bookmarks
       for(let theurl in allbookmarks) {
-          let thetitle = allbookmarks[theurl];
+        let thetitle = allbookmarks[theurl];
           await browser.bookmarks.create({
               parentId: folderId,
               title: thetitle,
@@ -102,15 +132,13 @@ async function bookmarkMyTabs(folderId, replaceAll) {
 }
 
 
-async function doSomething(alarm) {
+async function getAutosaveRoot() {
   /**
-   * Alarm event handler: performs the tab save
+   * Make sure we have an AUTOSAVE folder
+   * Return the folderId
    */
-  console.log('Waking upon alarm ' + alarm.name);
 
-  // try-catch wrapper to make Chrome happy
   try {
-
     // Check if folder exists, otherwise create
     let folderId ='';
     let folderName = 'AUTOSAVE';
@@ -118,6 +146,7 @@ async function doSomething(alarm) {
     
     if (results.length) {
       folderId = results[0].id;
+      console.log(`Found ${folderName} with id ${folderId}`);
       
     } else {
       console.log(`I did not find ${folderName}: need to create it`)
@@ -129,7 +158,56 @@ async function doSomething(alarm) {
       folderId = creation.id;
       console.log(`Background: folder ${folderName} created with id ${folderId}`);
     }
-    console.log(`Background: found folder ${folderName} with id ${folderId}`);
+    return folderId;
+     
+  } catch(error) {
+    console.error(`Background: an error occurred during getAutosaveRoot: ${error.message}`);
+  }
+}
+
+async function getDailyFolder(autosaveroot) {
+  /**
+   * Make sure we have a daily folder for backups and create one if not.
+   */
+  try {
+    let folderId ='';
+    let folderName = new Date().toISOString().slice(0, 10);
+    let results = await browser.bookmarks.search({title: folderName});
+    
+    if (results.length) {
+      folderId = results[0].id;
+      console.log(`Found ${folderName} with id ${folderId}`);
+      
+    } else {
+      console.log(`I did not find ${folderName}: need to create it`)
+      let creation = await browser.bookmarks.create({
+        parentId: autosaveroot,
+        title: folderName,
+        url: null
+      });
+      folderId = creation.id;
+      console.log(`Background: folder ${folderName} created with id ${folderId}`);
+    }
+    return folderId;
+
+  } catch(error) {
+    console.error(`Background: an error occurred during getDailyFolder: ${error.message}`);
+  }
+}
+
+
+async function doSomething(alarm) {
+  /**
+   * Alarm event handler: performs the tab save
+   */
+  console.log('Waking upon alarm ' + alarm.name);
+
+  // try-catch wrapper to make Chrome happy
+  try {
+
+    let rootId = await getAutosaveRoot();
+    let folderId = await getDailyFolder(rootId);
+    console.log(`Background: going to use folder with id ${folderId}`);
 
     // Before we go further, load settings and check again
     console.log('Checking settings before we go further');
