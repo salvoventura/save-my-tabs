@@ -1,7 +1,7 @@
 #############
 Save my tabs!
 #############
-An open source browser addon/extension to bookmark at once all open tabs to a folder in the Bookmarks Toolbar.  
+An open source browser addon/extension to bookmark at once all open tabs to a folder in the Bookmarks Toolbar. Now it includes an auto-save feature.  
 
 Why this tool
 =============
@@ -49,6 +49,14 @@ Replace folder content
 ======================
 By default, tabs will be *added* to existing folders; duplicates are detected based on URL. If you wish to instead completely *replace* the content of an existing bookmarks folder with the new list, check this box. Use with care.
 
+Options (Autosave)
+==================
+On the top right corner of the Save my Tabs popup, you will find a gear icon: click on it and the *Options* panel will open. Currently, the only options available are to control the **autosave** feature. Options are described in detail on the panel. Essentially, you can specify a time interval at which the addon will bookmark all the open tabs **across all browser windows** into a daily folder. These folders are created under a bookmark folder called AUTOSAVE.
+
+.. image:: options-icon-snapshot.png
+
+.. image:: options-panel-snapshot.png
+
 
 ###########
 Development
@@ -61,6 +69,13 @@ To install during development, please follow these excellent tutorials, one for 
 
 Version history
 ===============
+- 1.2.0
+   - Partially address enhancement #1 `Option to set autosave and autodelete old saves. <https://github.com/salvoventura/save-my-tabs/issues/1>`_
+   - Upgrade Bootstrap CSS library to v4.4.1
+   - Upgrade webextension-polyfill to v0.6.0
+   - Manifest updates to include additional permissions (alarms, storage), background scripts, and options_ui
+   - UI cosmetic and usability enhancements
+
 - 1.1.0
    - Implement enhancement #2 `Selected an existing folder to save bookmarks into will delete all the preexisting bookmarks in that folder <https://github.com/salvoventura/save-my-tabs/issues/2>`_
    - Fix issue #4 `Misdetects duplicate tabs <https://github.com/salvoventura/save-my-tabs/issues/4>`_
@@ -79,4 +94,3 @@ Other credits
 =============
  - Icon file (iconfinder_tab_new_raised_18931.png) 
    - **Alessandro Rei**, License GPL, *Dark Glass* icon set, https://www.iconfinder.com/icons/6203/new_raised_tab_icon
- 

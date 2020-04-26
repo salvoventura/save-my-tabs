@@ -3,13 +3,17 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="bootstrap.min.css"/>
-    <link rel="stylesheet" href="save-my-tabs.css"/>
+    <link rel="stylesheet" href="../css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="../css/save-my-tabs.css"/>
   </head>
 
   <body>
       <div class="container">
-          <h3>Save my tabs!</h3>
+        <span class="float-right">
+          <img id="btnSettings" src="../icons/gear.svg" class="svg_icon_clickable" />
+        </span>
+
+        <h3><img alt="Open options panel" src="../icons/iconfinder_tab_new_raised_18931.png"/> Save my tabs!</h3>
           <div>  <!-- This was a <form>, but even without a submit button it would trigger some undebuggable error. -->
             <div class="form-group">
               <label for="folder-list">Use existing folder</label>
@@ -17,9 +21,9 @@
               <small id="folder-list-help" class="form-text text-muted">Choose an existing or predefined bookmark folder from the list.</small>
             </div>
             <div class="form-group">
-              <input id="folder-replace-all" type="checkbox">
-              <label for="folder-replace-all">Replace folder content</label>
-              <small id="folder-replace-all-help" class="form-text text-muted">Remove existing bookmarks, replace with current tabs.</small>
+              <input id="folder-overwrite" type="checkbox">
+              <label for="folder-overwrite">Replace folder content</label>
+              <small id="folder-overwrite-help" class="form-text text-muted">Remove existing bookmarks, replace with current tabs.</small>
             </div>
             <div class="form-group">
               <label for="folder-name">Create new folder</label>
@@ -30,12 +34,23 @@
               <button id="btnSave" class="btn btn-primary">Save my tabs!</button>
             </div>
           </div>
+
+          <small id="folder-overwrite-warning" class="form-text warningbox hidden">
+            We have detected more than one browser window open. <br>
+            With <i>Replace folder content</i> checked we will replace <br>
+            the content of an existing bookmark folder with the <br>
+            tabs open in<b> this browser window only</b>.
+          </small>
+
       </div>
+      <hr>
       <small class="form-text text-muted">
-      Version 1.1.0. Find us on <a href="https://github.com/salvoventura/save-my-tabs" target="_blank">GitHub</a>.
+        <span class="float-left">
+          Version 1.2.0. Find us on <a href="https://github.com/salvoventura/save-my-tabs" target="_blank">GitHub</a>.
+        </span>
       </small>
-      <script src="browser-polyfill.min.js"></script>
+      <script src="../lib/browser-polyfill.min.js"></script>
+      <script src="../lib/common.js"></script>
       <script src="save-my-tabs.js"></script>
   </body>
-
 </html>
