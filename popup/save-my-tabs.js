@@ -1,6 +1,7 @@
 /******************************************************************************
   Author : Salvatore Ventura <salvoventura@gmail.com>
     Date : 26 May 2019
+   AddOn : Save my tabs!
  Purpose : Save all browser open tabs to a folder in the Bookmarks Toolbar.
             Give options to the user on which folder to use, in particular:
             - list of currently existing bookmark folder
@@ -16,6 +17,7 @@
             Implemented autosave for issue #1 (https://github.com/salvoventura/save-my-tabs/issues/1)
               Default autosave folder is AUTOSAVE. User can chose whether to append or replace content.
             Updated webextension-polyfill to v.0.6.0
+            Updated bootstrap to v4.4.1
            
   Version : 1.1.0
             Fix issue #4 (https://github.com/salvoventura/save-my-tabs/issues/4)
@@ -25,132 +27,49 @@
               Default behavior is now to append new tabs to existing folder.
               Option given to delete all existing bookmarks if desired.
   Version : 1.0
-            
-
-
-
 ******************************************************************************/
-"use strict";
-// https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
-// chrome detection from this post triggers true on FF as well, hence using Firefox detection
-// Firefox 1.0+
-var isFirefox = typeof InstallTrigger !== 'undefined';
-
-/*
- Predefined bookmark folders have different IDs in different browsers.
- Need to set this accordingly
-
-                     Chrome    Firefox
- 'Bookmarks Bar':       "1"    "toolbar_____"
- 'Other Bookmarks':     "2"    "unfiled_____"
-*/
-let TOOLBAR_ID = isFirefox ? "toolbar_____" : "1";
 
 
-async function bookmarkMyTabs(folderId, replaceAll) {
-  /* Loop through all open tabs, and then save them in the new/existing
-     bookmark toolbar subfolder selected, passed here via folderId
-     If replaceAll is true, first delete all existing bookmarks
-  */
+/**
+ * Populate the addon popup select element with the list of bookmark folders
+ * already present on the Toolbar.
+ * 
+ * Add some presets as convenient new folder names (in green).
+ *  
+ */ 
+ async function ui_prepareSaveFolderSelect() {
 
-  // try-catch wrapper to make Chrome happy
-  try {
-      var allbookmarks = {};  // must use var instead of let because of the conditional block w/ replaceAll
-
-      // get list of existing bookmarks in this folder and delete them as we go
-      let existingBookmarks = await browser.bookmarks.getChildren(folderId);
-      for (let existing of existingBookmarks) {
-          allbookmarks[existing.url] = existing.title;  // store existing bookmarks in global list first
-          await browser.bookmarks.remove(existing.id);  // remove from the browser
-      }
-
-      if (replaceAll) {
-          // reset the allbookmarks list
-          allbookmarks = {};
-      }
-
-      /**
-       * IMPORTANT
-       * tabs.query returns a list of tabs.
-       *    'currentWindow: true' means "only pick tabs in the current window"
-       * 
-       * This is ok if you only have ONE browser window. If you have more windows open
-       * then there might be a disaster
-       * 
-       * Scenario
-       *  - multiple browser windows open
-       *  - use the overwrite options
-       *  - User presses "save tabs" on window 1: list of tabs gets saved
-       *  - User moves to window 2, and presses "save tabs" to same folder as above
-       * 
-       * Result
-       *  - only tabs from Window 2 have been persisted
-       * 
-       * It's a tricky situation. I'd rather have more than lost something.
-       * We will remove the filter.
-       * 
-       */
-      
-      
-      // get list of currently open tabs
-      // let openTabs = await browser.tabs.query({currentWindow: true});
-      let openTabs = await browser.tabs.query();  // from any open window
-      for (let tab of openTabs) {
-          allbookmarks[tab.url] = tab.title;
-      }
-
-      // save all bookmarks
-      for(let theurl in allbookmarks) {
-          let thetitle = allbookmarks[theurl];
-          await browser.bookmarks.create({
-              parentId: folderId,
-              title: thetitle,
-              url: theurl
-          });
-      }
-
-  } catch(error) {
-      console.error(`An error occurred during bookmarkMyTabs ${folderId}: ${error.message}`);
-  }
-}
-
-
-async function prepareSaveFolderSelect() {
-  /* Populate the addon popup select element with the list of bookmark folders
-     already present on the Toolbar.
-     Add some presets as convenient new folder names (in green).
-  */
-
-  // try-catch wrapper to make Chrome happy
   try {
       // Get list of subfolders of the Bookmark Toolbar
       let selectFolder = document.getElementById("folder-list");
       let toolbarFolders = await browser.bookmarks.getChildren(TOOLBAR_ID);
 
       // Append values as items to the select element of the popup
+      let checklist = new Set(); // Create a list of existing folder names, for the next step
       for (let folder of toolbarFolders) {
-          if (folder.url !== undefined) continue;
+          if (folder.url !== undefined) { 
+            continue;  // it's a bookmark, not a folder: skip
+          }
           let option = new Option(folder.title, folder.id, false, false);
           selectFolder.appendChild(option);
+          checklist.add(folder.title);
       }
 
-      // Add preset options: these folders, if selected, need to be created
+      // Add preset options: these folders, if selected, need to be created:
+      // - Date+time
+      // - Date
+      // - Save my tabs!
+      let dateTime = new Date(new Date().toString().split('GMT')[0]+' UTC').toISOString().split('.')[0].replace('T',' ');
       var additionalOptions = [
-        new Date(new Date().toString().split('GMT')[0]+' UTC').toISOString().split('.')[0].replace('T',' '),
-        new Date().toISOString().slice(0, 10),
+        dateTime,
+        dateTime.slice(0, 10),
         'Save my tabs!'
       ];
-
-      // Create a list of existing folder names, for the next step
-      let checklist = [];
-      for (let folder of toolbarFolders) {
-          checklist.push(folder.title);
-      }
 
       // Skip additionalOptions folders that have been created already.
       // These would have been picked up already by the first loop.
       for (let folder of additionalOptions) {
-          if (checklist.indexOf(folder) != -1) {
+          if (checklist.has(folder)) {
               continue; // already exists: skip
           }
           let option = new Option(folder, "tobecreated", false, false); // use "tobecreated" as special id
@@ -159,56 +78,63 @@ async function prepareSaveFolderSelect() {
       }
 
   } catch(error) {
-      console.error(`An error occurred during prepareSaveFolderSelect: ${error.message}`);
+      console.error(`An error occurred during ui_prepareSaveFolderSelect: ${error.message}`);
   }
 }
 
 
+/**
+ * Save Button onClick handler:
+ *  1. detect user's desired folder to be used
+ *  2. if necessary, create the bookmark folder
+ *  3. check overwrite flag
+ *  4. save all open tabs in the folder
+ *  5. close the popup window
+ *  
+ */
 async function onSaveBtnClick() {
-  /* Initiate the save process:
-     1. detect user's desired folder to be used
-     2. if necessary, create the bookmark folder
-     3. save all open tabs in it
-     4. close the popup window
-  */
 
-  // try-catch wrapper to make Chrome happy
   try {
-      // detect user's desired folder to be used and
-      // if necessary, create the bookmark folder
-      let folderId;
-      let folderName = document.getElementById("folder-name").value.trim();
-      if (folderName === "") {
-          // use value from the select box
-          let folderList = document.getElementById("folder-list");
-          folderId = folderList.value;
-          if (folderId === "tobecreated") {
-              // retrieve the folder name from the select box
-              folderName = folderList.options[folderList.selectedIndex].text;
-          }
-      } else {
-          // use value from input box
-          folderId = "tobecreated";
-      }
-      // Here folderName is not empty.
-      // If folderId is == "tobecreated", we need to create it
-      if (folderId === "tobecreated") {
-          // create the folder, then retrieve the folder id
-          let bookmarkFolder = await browser.bookmarks.create({
-              parentId: TOOLBAR_ID,
-              title: folderName,
-              url: null
-          });
-          folderId = bookmarkFolder.id;
-      }
+    let folderId;
+    let folderName = document.getElementById("folder-name").value.trim();
 
-      // Check if user wants to delete existing bookmarks first
-      let replaceAll = document.getElementById("folder-replace-all").checked
-      console.log(`replaceAll ${replaceAll}`)
+    if (folderName === "") {
+        // use value from the select box
+        let folderList = document.getElementById("folder-list");
+        folderId = folderList.value;
+        if (folderId === "tobecreated") {
+            // retrieve the folder name from the select box
+            folderName = folderList.options[folderList.selectedIndex].text;
+        }
 
-      // Now use this folderId to save in it all tabs, and respect replaceAll user selection
-      // then close the popup window (as completion indicator)
-      bookmarkMyTabs(folderId, replaceAll).then(()=>{window.close()});
+    } else {
+        // use value from input box
+        folderId = "tobecreated";
+    }
+
+    // Here folderName is not empty.
+    // If folderId == "tobecreated", we need to create it
+    if (folderId === "tobecreated") {
+        // create the folder, then retrieve the folder id
+        let bookmarkFolder = await browser.bookmarks.create({
+            parentId: TOOLBAR_ID,
+            title: folderName,
+            url: null
+        });
+        folderId = bookmarkFolder.id;
+    }
+
+    // Check if user wants to delete existing bookmarks first
+    let overwrite = document.getElementById("folder-overwrite").checked
+    console.log("Got overwrite as ", overwrite);
+
+    // Now use this folderId to save in it all tabs
+    // then close the popup window (also a completion indicator)
+    saveCurrentTabs(folderId, overwrite)
+      .then( ()=>{
+                  window.close()
+                 }
+      );
 
   } catch(error) {
       console.error(`An error occurred during onSaveBtnClick: ${error.message}`);
@@ -216,194 +142,62 @@ async function onSaveBtnClick() {
 }
 
 
-async function toggleAutosaveSection() {
-  /**
-   * Event listener to update UI and save settings
-   * upon changes in autosave section.
-   */
+/**
+ * Settings Button onClick handler
+ * 
+ */
+function onSettingsBtnClick() {
+  browser.runtime.openOptionsPage()
+    .then( ()=>{
+      window.close()
+    }
+  );
+}
 
-   // try-catch wrapper to make Chrome happy
-  try {
-    let autoSaveList = document.getElementById('autosave-list');
-    let autoSaveOverwrite = document.getElementById('autosave-replace-all');
-    let autoSaveSwitch = document.getElementById('autosave-switch');
-  
-    if (autoSaveSwitch.checked) {
-      console.log('Autosave turned ON');
-      autoSaveList.disabled = false;
-      autoSaveOverwrite.disabled = false;
-  
+
+/**
+ * Check if more than one browser window is open
+ * and display a warning message if user checks
+ * the overwrite box
+ */
+async function ui_displayMultiWindowOverwriteWarning() {
+  var gettingAll = await browser.windows.getAll();
+  if (gettingAll.length > 1) {
+    if (document.getElementById("folder-overwrite").checked) {
+      document.getElementById("folder-overwrite-warning").classList.remove('hidden');
     } else {
-      console.log('Autosave turned OFF');
-      autoSaveList.disabled = true;
-      autoSaveOverwrite.disabled = true;
+      document.getElementById("folder-overwrite-warning").classList.add('hidden');
     }
-
-  } catch(error) {
-      console.error(`An error occurred during toggleAutosaveSection ${error.message}`);
-  }
-
-}
-
-
-async function saveOptions() {
-  /**
-   * Retrieve options from UI and save them in storage
-   */
-  
-   // try-catch wrapper to make Chrome happy
-  try {
-    let autosave_on = document.getElementById('autosave-switch').checked;
-    let autosave_interval = document.getElementById("autosave-list").value;
-    let autosave_overwrite_on = document.getElementById('autosave-replace-all').checked;
-    
-    console.log(`Saving options as auto-save ${autosave_on} interval ${autosave_interval} overwrite ${autosave_overwrite_on}`);
-  
-    // prepare data for saving
-    let settings = {
-        autosave: autosave_on,
-        interval: autosave_interval,
-        overwrite: autosave_overwrite_on
-    } 
-  
-    // if you do set(settings) you find two keys in storage: `autosave` and `interval`
-    // if you do set({settings}) you find ONE key `settings` with two (k,v)
-    await browser.storage.local.set({settings});
-
-  } catch(error) {
-      console.error(`An error occurred during saveOptions: ${error.message}`);
-  }
-}
-
-
-async function tellBackendScript() {
-  /**
-   * Send a wake-up message to backend script to handle Alarms
-   */
-
-   // try-catch wrapper to make Chrome happy
-  try {
-
-    console.log('Sending wake-up message to backend');
-    await browser.runtime.sendMessage(
-      {
-        message: "Configuration was updated"
-      }
-    );
-
-  } catch(error) {
-      console.error(`An error occurred during tellBackendScript: ${error.message}`);
-  }
-
-}
-
-
-async function loadSavedOptions() {
-  /**
-   * Retrieve options value save in storage and apply them to UI
-   */
-
-   // try-catch wrapper to make Chrome happy
-  try {
-    let settings = await browser.storage.local.get("settings");
-    console.log(`Retrieved settings as ${settings.settings.autosave} ${settings.settings.interval} ${settings.settings.overwrite}`)
-    
-    document.getElementById('autosave-switch').checked = settings.settings.autosave;
-    document.getElementById("autosave-list").value = settings.settings.interval;
-    document.getElementById("autosave-replace-all").checked = settings.settings.overwrite;
-
-  } catch(error) {
-      console.error(`An error occurred during loadSavedOptions: ${error.message}`);
-  }
-}
-
-
-// async function setIcon(name) {
-//   /**
-//    * Change the icon during tab saving
-//    */
-//   let icon = {path: "icons/iconfinder_tab_new_raised_18931.png"};
-//   if (name == "save") {
-//     icon = {path: "icons/iconfinder_history_15533.png"};
-//   }
-//   return browser.browserAction.setIcon(icon);
-// }
-  
-
-function all_well_log() {
-  /**
-   * Logging function to close any async call chain
-   */
-  console.log('Operation completed');
-}
-
-
-function some_error_log() {
-  /**
-   * Logging function to close any async call chain
-   */
-  console.log('An error occurred');
-}
-
-
-async function registerAutosaveToggle() {
-  /**
-   * Attach event handler to any options-related UI element
-   * that requires saving.
-   */
-
-   // try-catch wrapper to make Chrome happy
-  try {
-    let optionElements = document.getElementsByClassName("options");
-    for (let i=0; i < optionElements.length; i++ ) {
-    
-      optionElements[i].addEventListener(
-          'change',
-          function() { 
-            toggleAutosaveSection()
-            .then(saveOptions(), some_error_log)
-            .then(tellBackendScript(), some_error_log)
-            .then(all_well_log, some_error_log); 
-          },
-          false
-      );
-    }
-      
-  } catch(error) {
-    console.error(`An error occurred during registerAutosaveToggle: ${error.message}`);
-  }
-}
-
-
-function toggleMoreSettingsSection() {
-  /**
-   * Handler to toggle the more-settings section upon click
-   */
-  let moreSettingsSwitch = document.getElementById("more-settings-switch");
-  let moreSettingsSection = document.getElementById("more-settings-section");
-  if (moreSettingsSection.classList.contains('hidden')) {
-    moreSettingsSection.classList.remove('hidden');
-    moreSettingsSwitch.text = 'Close settings';
-    
-
-  } else {
-    moreSettingsSection.classList.add('hidden');
-    moreSettingsSwitch.text = 'More settings';
-
   }
 }
 
 
 /**
- *  MAIN
- *  Prepare user interface:
- *  - populate the select box in the popup
- *  - attach change handler to options elements
- *  - attach click handler to the save button
- *  - load saved options to UI
- */ 
-prepareSaveFolderSelect();
-registerAutosaveToggle();
-document.getElementById("more-settings-switch").onclick = toggleMoreSettingsSection;
-document.getElementById("btnSave").onclick = onSaveBtnClick;
-loadSavedOptions().then(toggleAutosaveSection, some_error_log);
+ * MAIN
+ * Prepare user interface:
+ * - populate the select box in the popup
+ * - attach click handler to the save button
+ * - attach options handler to Settings link
+ * 
+ */
+async function main() {
+
+  try {
+    console.debug("Popup script starting up");
+    await ui_prepareSaveFolderSelect();
+
+    document.getElementById("folder-overwrite").onchange = ui_displayMultiWindowOverwriteWarning;
+    document.getElementById("btnSave").onclick = onSaveBtnClick;
+    document.getElementById("btnSettings").onclick = onSettingsBtnClick;
+      
+  } catch (error) {
+    console.error(`An error occurred during popup main: ${error.message}`);
+  }
+}
+
+
+/**
+ * Call Main: needed because of async call
+ * 
+ */
+main();

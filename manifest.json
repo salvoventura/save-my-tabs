@@ -17,8 +17,17 @@
 
   "background": {
     "persistent": true,
-    "page": "background/background.html"
-  },  
+    "scripts": [
+      "lib/browser-polyfill.min.js",
+      "lib/common.js",
+      "background/background.js"
+    ]
+  },
+
+  "options_ui": {
+    "open_in_tab": true,
+    "page": "options/options.html"
+  },
 
   "browser_action": {
     "default_icon": "icons/iconfinder_tab_new_raised_18931.png",
