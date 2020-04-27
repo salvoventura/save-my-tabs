@@ -22,7 +22,7 @@ Mozilla Firefox
 
 Google Chrome
 =============
-Although the source code works on Chrome as well, I haven't published it there yet.
+`<https://chrome.google.com/webstore/detail/save-my-tabs/kfoppgabigkfegjfafmadikhjllohfep>`_
 
 #####
 USAGE
@@ -51,9 +51,11 @@ By default, tabs will be *added* to existing folders; duplicates are detected ba
 
 Options (Autosave)
 ==================
-On the top right corner of the Save my Tabs popup, you will find a gear icon: click on it and the *Options* panel will open. Currently, the only options available are to control the **autosave** feature. Options are described in detail on the panel. Essentially, you can specify a time interval at which the addon will bookmark all the open tabs **across all browser windows** into a daily folder. These folders are created under a bookmark folder called AUTOSAVE.
+On the top right corner of the Save my Tabs popup, you will find a gear icon: click on it and the *Options* panel will open. Currently, the only options available are to control the **autosave** feature. 
 
 .. image:: options-icon-snapshot.png
+
+Options are described in detail on the panel. Essentially, you can specify a time interval at which the addon will bookmark all the open tabs **across all browser windows** into a daily folder. These folders are created under a bookmark folder called AUTOSAVE.
 
 .. image:: options-panel-snapshot.png
 
