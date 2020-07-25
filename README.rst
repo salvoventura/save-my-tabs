@@ -26,7 +26,8 @@ Google Chrome
 
 Microsoft Edge
 ==============
-You must use the Google Chrome store.
+You would use the Google Chrome store.
+
 `<https://support.microsoft.com/en-us/help/4538971/microsoft-edge-add-or-remove-extensions>`_
 
 
