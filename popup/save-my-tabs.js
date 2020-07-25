@@ -13,6 +13,9 @@
               - this overrides any selection on the list
             Compatible with Chrome and Firefox, via webextension-polyfill v.0.4.0
 
+  Version : 1.2.1
+           Skipping pinned tabs
+
   Version : 1.2.0
             Implemented autosave for issue #1 (https://github.com/salvoventura/save-my-tabs/issues/1)
               Default autosave folder is AUTOSAVE. User can chose whether to append or replace content.

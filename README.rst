@@ -22,7 +22,13 @@ Mozilla Firefox
 
 Google Chrome
 =============
-Although the source code works on Chrome as well, I haven't published it there yet.
+`<https://chrome.google.com/webstore/detail/save-my-tabs/kfoppgabigkfegjfafmadikhjllohfep>`_
+
+Microsoft Edge
+==============
+You must use the Google Chrome store.
+`<https://support.microsoft.com/en-us/help/4538971/microsoft-edge-add-or-remove-extensions>`_
+
 
 #####
 USAGE
@@ -51,9 +57,11 @@ By default, tabs will be *added* to existing folders; duplicates are detected ba
 
 Options (Autosave)
 ==================
-On the top right corner of the Save my Tabs popup, you will find a gear icon: click on it and the *Options* panel will open. Currently, the only options available are to control the **autosave** feature. Options are described in detail on the panel. Essentially, you can specify a time interval at which the addon will bookmark all the open tabs **across all browser windows** into a daily folder. These folders are created under a bookmark folder called AUTOSAVE.
+On the top right corner of the Save my Tabs popup, you will find a gear icon: click on it and the *Options* panel will open. Currently, the only options available are to control the **autosave** feature. 
 
 .. image:: options-icon-snapshot.png
+
+Options are described in detail on the panel. Essentially, you can specify a time interval at which the addon will bookmark all the open tabs **across all browser windows** into a daily folder. These folders are created under a bookmark folder called AUTOSAVE.
 
 .. image:: options-panel-snapshot.png
 
@@ -69,6 +77,10 @@ To install during development, please follow these excellent tutorials, one for 
 
 Version history
 ===============
+- 1.2.1
+   - Skipping pinned tabs from being saved: being pinned, the browser will keep them around already
+   - Update info texts, including the fact that Microsoft Edge is now supported as well: just use the Google Chrome store to install the extension
+
 - 1.2.0
    - Partially address enhancement #1 `Option to set autosave and autodelete old saves. <https://github.com/salvoventura/save-my-tabs/issues/1>`_
    - Upgrade Bootstrap CSS library to v4.4.1

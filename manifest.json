@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Save my tabs!",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Save all open tabs to a bookmark folder",
   "homepage_url": "https://github.com/salvoventura/save-my-tabs",
   "icons": {
