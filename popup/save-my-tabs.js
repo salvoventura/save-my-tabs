@@ -13,6 +13,9 @@
               - this overrides any selection on the list
             Compatible with Chrome and Firefox, via webextension-polyfill v.0.4.0
 
+ Version : 1.2.2
+           Introduce configuration flag to control pinned tabs 
+
   Version : 1.2.1
            Skipping pinned tabs
 
@@ -127,13 +130,18 @@ async function onSaveBtnClick() {
         folderId = bookmarkFolder.id;
     }
 
-    // Check if user wants to delete existing bookmarks first
-    let overwrite = document.getElementById("folder-overwrite").checked
-    console.log("Got overwrite as ", overwrite);
+    // Prepare an options object and:
+    //    Check if user wants to delete existing bookmarks first
+    //    Check if user wants to also save pinned tabs
+    //    Update the Map accordingly
+    let options = new Map();
+    options.set('overwrite', document.getElementById("folder-overwrite").checked);
+    options.set('savepinned', document.getElementById("folder-savepinned").checked);
+    console.log('Got options ', [...options]);
 
     // Now use this folderId to save in it all tabs
     // then close the popup window (also a completion indicator)
-    saveCurrentTabs(folderId, overwrite)
+    saveCurrentTabs(folderId, options)
       .then( ()=>{
                   window.close()
                  }

@@ -78,6 +78,9 @@ To install during development, please follow these excellent tutorials, one for 
 
 Version history
 ===============
+- 1.2.2
+   - Allow user to control what happens to pinned tabs
+
 - 1.2.1
    - Skipping pinned tabs from being saved: being pinned, the browser will keep them around already
    - Update info texts, including the fact that Microsoft Edge is now supported as well: just use the Google Chrome store to install the extension
@@ -107,3 +110,4 @@ Other credits
 =============
  - Icon file (iconfinder_tab_new_raised_18931.png) 
    - **Alessandro Rei**, License GPL, *Dark Glass* icon set, https://www.iconfinder.com/icons/6203/new_raised_tab_icon
+ - Other icons are from Bootstrap

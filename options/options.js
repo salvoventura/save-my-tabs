@@ -3,6 +3,8 @@
     Date : 25 Apr 2020
    AddOn : Save my tabs!
  Purpose : Options script. This handles the options page.
+ Version : 1.2.2
+           Introduce configuration flag to control pinned tabs 
  Version : 1.2.0
            Introducing autosave
 ******************************************************************************/
@@ -20,6 +22,7 @@ async function ui_loadSavedOptions() {
       document.getElementById("autosave-switch").checked = options.get("autosave");
       document.getElementById("autosave-options").value = options.get("interval");
       document.getElementById("autosave-overwrite").checked = options.get("overwrite");
+      document.getElementById("autosave-savepinned").checked = options.get("savepinned");
       toggleControls();
   
     } catch(error) {
@@ -41,6 +44,7 @@ async function ui_getOptionsAndSave() {
         options.set('autosave', document.getElementById('autosave-switch').checked );
         options.set('interval', document.getElementById("autosave-options").value );
         options.set('overwrite', document.getElementById('autosave-overwrite').checked);
+        options.set('savepinned', document.getElementById('autosave-savepinned').checked);
 
         await saveOptions(options);
   
@@ -57,6 +61,7 @@ function toggleControls() {
     let autosaveOn = document.getElementById("autosave-switch").checked;
     document.getElementById("autosave-options").disabled = !autosaveOn;
     document.getElementById("autosave-overwrite").disabled = !autosaveOn;
+    document.getElementById("autosave-savepinned").disabled = !autosaveOn;
 }
   
   
@@ -69,4 +74,5 @@ document.getElementById("autosave-switch").addEventListener('change', ui_getOpti
 document.getElementById("autosave-switch").addEventListener('change', toggleControls);
 document.getElementById("autosave-options").addEventListener('change', ui_getOptionsAndSave);
 document.getElementById("autosave-overwrite").addEventListener('change', ui_getOptionsAndSave);
+document.getElementById("autosave-savepinned").addEventListener('change', ui_getOptionsAndSave);
 document.getElementById("btnSave").addEventListener('click', ui_getOptionsAndSave);

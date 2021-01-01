@@ -67,10 +67,10 @@ async function PeriodicSave(alarm) {
 
     let options = await getSavedOptions();
 
-    if (options.get('autosave')) {
+    if (options.get('autosave') === true) {
       // Now use this folderId to save in it all tabs, and respect replaceAll user selection
       console.log("Let's save tabs");
-      await saveCurrentTabs(folderId, options.get('overwrite'), {});
+      await saveCurrentTabs(folderId, options, {});
     
     } else {
       // Nothing to do
