@@ -78,6 +78,9 @@ To install during development, please follow these excellent tutorials, one for 
 
 Version history
 ===============
+- 1.2.3
+   - Bugfix to prevent autosave from losing all bookmarks for the day after a browser crash.
+
 - 1.2.2
    - Allow user to control what happens to pinned tabs
 
