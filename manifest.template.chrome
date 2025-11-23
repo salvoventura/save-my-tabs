@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
 
-    "name": "Save my tabs!",
+    "name": "NEWNEW Save my tabs!",
 
     "version": "1.3.0",
 
@@ -14,12 +14,8 @@
     "description": "Save all open tabs to a bookmark folder",
 
     "author": "Salvatore Ventura",
-    "homepage_url": "https://github.com/salvoventura/save-my-tabs",
 
-    "developer": {
-        "name": "Salvatore Ventura",
-        "url": "https://github.com/salvoventura/save-my-tabs"
-    },
+    "homepage_url": "https://github.com/salvoventura/save-my-tabs",
 
     "permissions": [
         "bookmarks",
@@ -33,7 +29,7 @@
     ],
 
     "action": {
-        "default_title": "Save my tabs!",
+        "default_title": "NEWNEW Save my tabs!",
         "default_popup": "popup/save-my-tabs.html"
     },
 
@@ -47,8 +43,6 @@
     },
 
     "background": {
-        "scripts": [
-            "background/background.js"
-        ]
+        "service_worker": "background/wrapper.js"
     }
 }

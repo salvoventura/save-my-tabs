@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="../css/save-my-tabs.css"/>
+  </head>
+
+  <body>
+    <br><br>
+    <div class="container">
+      <div class="row">
+      <div class="col-md-6">
+      
+          <h2>
+            <img src="../icons/iconfinder_tab_new_raised_18931.png"/> Save my Tabs - Settings
+          </h2>
+          <div class="row">&nbsp;</div>
+          
+          <h3>Auto-save</h3>
+          <small id="autosave-help" class="form-text text-muted">
+            <p>
+            Options in this page do not affect main functionality accessed through the menu popup.
+            </p>
+          </small>
+        <div class="row">&nbsp;</div>
+
+          <div class="form-group">
+            
+            <h4><img src="../icons/toggles.svg" alt="" class="svg_icons_large">&nbsp;&nbsp;&nbsp;Enable/Disable</h4>
+            <input id="autosave-switch" class="options" type="checkbox">
+            <small id="autosave-switch-help" class="form-text text-muted">
+              <p>
+              Enable/disable automatic tab saving functionality.
+              </p>
+              
+              <p>
+              When enabled, the addon will periodically take a snapshot of
+              all open tabs <b>across all open browser windows</b> and save them
+              in a daily bookmark subfolder under AUTOSAVE.
+              </p>
+
+              <p>
+              Daily bookmark subfolder has title in YYYY-mm-dd format.
+              </p>
+            </small>
+          </div>
+
+          <div class="row">&nbsp;</div>
+
+          <div class="form-group">
+            <h4><img src="../icons/stopwatch.svg" alt="" class="svg_icons_large">&nbsp;&nbsp;&nbsp;Interval</h4>            
+            <select id="autosave-options" class="form-control options">
+              <option value="1">1 minute</option>
+              <option value="2">2 minutes</option>
+              <option value="3">3 minutes</option>
+              <option value="4">4 minutes</option>
+              <option value="5">5 minutes</option>
+              <option value="10">10 minutes</option>
+              <option value="15">15 minutes</option>
+              <option value="20">20 minutes</option>
+              <option value="30">30 minutes</option>
+              <option value="40">40 minutes</option>
+              <option value="45">45 minutes</option>
+              <option value="60">60 minutes</option>
+            </select>
+            <small id="autosave-options-help" class="form-text text-muted">
+              <p>
+              This option controls the interval (in minutes) at between auto-save snapshots.
+              </p>
+
+              <p>
+              The timer gets reset every time settings are updated, saved, or the
+              first browser window gets opened.
+              </p>
+            </small>
+          </div>
+
+          <div class="row">&nbsp;</div>
+
+          <div class="form-group">
+            <h4><img src="../icons/clipboard-data.svg" alt="" class="svg_icons_large">&nbsp;&nbsp;&nbsp;Overwrite</h4>
+            <input id="autosave-overwrite" class="options" type="checkbox" checked>
+            <label for="autosave-overwrite">Only keep most recent tabs</label>
+            <small id="autosave-overwrite-help" class="form-text text-muted">
+              <p>
+              With this option checked, only the most recent tabs are saved, which is
+              to say, only the tabs open at the time of the snapshot.
+              </p>
+            </small>
+          </div>
+
+          <div class="form-group">
+            <h4><img src="../icons/geo.svg" alt="a" class="svg_icons_large">&nbsp;&nbsp;&nbsp;Save pinned tabs</h4>
+            <input id="autosave-savepinned" class="options" type="checkbox" checked>
+            <label for="autosave-savepinned">Save pinned tabs as well</label>
+            <small id="autosave-savepinned-help" class="form-text text-muted">
+              <p>
+              With this option checked, pinned tabs will be saved as well.
+              </p>
+            </small>
+          </div>
+
+          <div class="row">&nbsp;</div>
+
+          <div class="form-group">
+            <button id="btnSave" class="btn btn-primary">Save</button>
+          </div>
+
+          <small class="form-text text-muted">
+            <hr>
+            Version 1.2.3. Find us on <a href="https://github.com/salvoventura/save-my-tabs" target="_blank">GitHub</a>.
+
+            Please take a moment and help spread the word by rating Save-my-tabs!
+
+            <a id="ratinglink-firefox" href="https://addons.mozilla.org/en-US/firefox/addon/save-all-my-tabs/" target="_blank">
+              For Firefox click here.
+            </a>
+            <img src="../icons/heart-fill.svg" alt="">
+            <a id="ratinglink-chrome" href="https://chrome.google.com/webstore/detail/save-my-tabs/kfoppgabigkfegjfafmadikhjllohfep" target="_blank">
+              For Google Chrome and Microsoft Edge click here.
+            </a>
+            <img src="../icons/heart-fill.svg" alt="">
+            Thank you for your support!
+          </small>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="../lib/browser-polyfill.min.js"></script>
+    <script src="../lib/common.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>
+

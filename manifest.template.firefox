@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
 
-    "name": "Save my tabs!",
+    "name": "NEWNEW Save my tabs!",
 
     "version": "1.3.0",
 
@@ -33,7 +33,7 @@
     ],
 
     "action": {
-        "default_title": "Save my tabs!",
+        "default_title": "NEWNEW Save my tabs!",
         "default_popup": "popup/save-my-tabs.html"
     },
 
@@ -48,6 +48,8 @@
 
     "background": {
         "scripts": [
+            "lib/browser-polyfill.min.js", 
+            "lib/common.js",
             "background/background.js"
         ]
     }
