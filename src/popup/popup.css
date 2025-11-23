@@ -1,0 +1,202 @@
+/**
+ * Save My Tabs - Popup Styles
+ * Version: 2.0.0
+ * Location: popup/popup.css
+ */
+
+body {
+  width: 380px;
+  padding: 0;
+  margin: 0;
+}
+
+.popup-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.popup-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.popup-header img {
+  width: 24px;
+  height: 24px;
+}
+
+.settings-icon {
+  cursor: pointer;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+  width: 20px;
+  height: 20px;
+  filter: invert(1);
+}
+
+.settings-icon:hover {
+  opacity: 1;
+}
+
+.popup-body {
+  padding: 20px;
+}
+
+.section {
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.section-title svg {
+  width: 14px;
+  height: 14px;
+}
+
+.folder-hint {
+  font-size: 0.8rem;
+  color: #28a745;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.folder-hint svg {
+  width: 12px;
+  height: 12px;
+}
+
+.divider-text {
+  text-align: center;
+  color: #adb5bd;
+  font-size: 0.8rem;
+  margin: 12px 0;
+  position: relative;
+}
+
+.divider-text::before,
+.divider-text::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: #dee2e6;
+}
+
+.divider-text::before {
+  left: 0;
+}
+
+.divider-text::after {
+  right: 0;
+}
+
+.options-group {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.form-check {
+  padding-left: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.form-check:last-child {
+  margin-bottom: 0;
+}
+
+.form-check-label {
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.btn-save {
+  padding: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.btn-save-left {
+  border-radius: 8px 0 0 8px;
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.btn-save-right {
+  border-radius: 0 8px 8px 0;
+  background: linear-gradient(45deg, #764ba2 0%, #667eea 100%);
+}
+
+.btn-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+}
+
+.btn-save:active {
+  transform: translateY(0);
+}
+
+.btn-save img {
+  width: 16px;
+  height: 16px;
+  filter: invert(1);
+}
+
+.quick-hint {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 12px;
+}
+
+.input-group-text {
+  background-color: #fff;
+  border-left: 0;
+}
+
+.form-control {
+  font-size: 0.9rem;
+}
+
+.form-select {
+  font-size: 0.9rem;
+}
+
+kbd {
+  padding: 2px 6px;
+  font-size: 0.75rem;
+}
+
+/* Multi-window warning adjustments */
+#folder-overwrite-warning {
+  font-size: 0.85rem;
+}

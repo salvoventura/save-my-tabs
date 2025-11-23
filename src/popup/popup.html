@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/common.css"/>
+  <link rel="stylesheet" href="popup.css"/>
+</head>
+
+<body>
+  <!-- Header -->
+  <div class="popup-header">
+    <h3>
+      <img src="../icons/iconfinder_tab_new_raised_18931.png" alt="Icon"/> 
+      Save my tabs!
+    </h3>
+    <img id="btnSettings" src="../icons/gear.svg" class="settings-icon" alt="Settings" title="Settings" />
+  </div>
+
+  <!-- Body -->
+  <div class="popup-body">
+    
+    <!-- Folder Selection Section -->
+    <div class="section">
+      <div class="section-title">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19z"/>
+        </svg>
+        Select Existing Folder
+      </div>
+      <select id="folder-list" class="form-select"></select>
+      <div id="last-folder-hint" class="folder-hint d-none">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+        </svg>
+        Last used folder selected
+      </div>
+    </div>
+
+    <div class="divider-text">or create new</div>
+
+    <!-- New Folder Section -->
+    <div class="section">
+      <div class="section-title">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M.5 3l.04.87a1.99 1.99 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2zm5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19c-.24 0-.47.042-.683.12L1.5 2.98a1 1 0 0 1 1-.98h3.672z"/>
+          <path d="M13.5 10a.5.5 0 0 1 .5.5V12h1.5a.5.5 0 1 1 0 1H14v1.5a.5.5 0 1 1-1 0V13h-1.5a.5.5 0 0 1 0-1H13v-1.5a.5.5 0 0 1 .5-.5z"/>
+        </svg>
+        Create New Folder
+      </div>
+      <div class="input-group">
+        <input id="folder-name" type="text" class="form-control" placeholder="Type folder name" autofocus />
+        <button class="btn btn-outline-secondary" type="button" id="clear-folder-name" title="Clear">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Options Section -->
+    <div class="section">
+      <div class="section-title">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+        </svg>
+        Options
+      </div>
+      <div class="options-group">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="folder-overwrite">
+          <label class="form-check-label" for="folder-overwrite">
+            Replace folder content
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="folder-savepinned">
+          <label class="form-check-label" for="folder-savepinned">
+            Include pinned tabs
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="close-tabs-after-save">
+          <label class="form-check-label" for="close-tabs-after-save">
+            Close tabs after saving
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Multi-window Warning -->
+    <div id="folder-overwrite-warning" class="alert alert-warning d-none py-2 px-3" role="alert">
+      <strong>Note:</strong> Multiple windows detected. Only tabs from this window will be saved.
+    </div>
+
+    <!-- Save Button -->
+    <div class="btn-group w-100" role="group">
+      <button id="btnSave" class="btn btn-primary btn-save btn-save-left">
+        <img src="../icons/floppy.svg" alt="Save icon" />
+        Save My Tabs
+      </button>
+      <button id="btnSaveAll" class="btn btn-primary btn-save btn-save-right">
+        Save All Windows
+        <img src="../icons/window-stack.svg" alt="Save icon" />
+      </button>
+    </div>
+
+    <!-- Quick Hint -->
+    <div class="quick-hint">
+      Press <kbd>Enter</kbd> in folder name to save quickly
+    </div>
+
+  </div>
+
+  <script src="../lib/browser-polyfill.min.js"></script>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

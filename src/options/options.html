@@ -1,137 +1,645 @@
 <!DOCTYPE html>
-
 <html>
-  <head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="../css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="../css/save-my-tabs.css"/>
-  </head>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/common.css"/>
+  <link rel="stylesheet" href="options.css"/>
+</head>
 
-  <body>
-    <br><br>
+<body>
+  <!-- Header -->
+  <div class="page-header">
     <div class="container">
-      <div class="row">
-      <div class="col-md-6">
-      
-          <h2>
-            <img src="../icons/iconfinder_tab_new_raised_18931.png"/> Save my Tabs - Settings
-          </h2>
-          <div class="row">&nbsp;</div>
+      <h2>
+        <img src="../icons/iconfinder_tab_new_raised_18931.png" alt="Icon"/> 
+        Save my Tabs
+      </h2>
+      <p class="page-subtitle">Configure your preferences and manage your tab-saving experience</p>
+    </div>
+  </div>
+
+  <div class="options-container">
+    <div class="row">
+      <div class="col-12">
+
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-tabs mt-4" id="settingsTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="autosave-tab" data-bs-toggle="tab" data-bs-target="#autosave-panel" type="button" role="tab" aria-controls="autosave-panel" aria-selected="true">
+              Auto-save
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="other-tab" data-bs-toggle="tab" data-bs-target="#other-panel" type="button" role="tab" aria-controls="other-panel" aria-selected="false">
+              Other Settings
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="docs-tab" data-bs-toggle="tab" data-bs-target="#docs-panel" type="button" role="tab" aria-controls="docs-panel" aria-selected="false">
+              Documentation
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="about-tab" data-bs-toggle="tab" data-bs-target="#about-panel" type="button" role="tab" aria-controls="about-panel" aria-selected="false">
+              About
+            </button>
+          </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content mt-3" id="settingsTabContent">
           
-          <h3>Auto-save</h3>
-          <small id="autosave-help" class="form-text text-muted">
-            <p>
-            Options in this page do not affect main functionality accessed through the menu popup.
-            </p>
-          </small>
-        <div class="row">&nbsp;</div>
-
-          <div class="form-group">
+          <!-- Auto-save Tab -->
+          <div class="tab-pane fade show active" id="autosave-panel" role="tabpanel" aria-labelledby="autosave-tab">
             
-            <h4><img src="../icons/toggles.svg" alt="" class="svg_icons_large">&nbsp;&nbsp;&nbsp;Enable/Disable</h4>
-            <input id="autosave-switch" class="options" type="checkbox">
-            <small id="autosave-switch-help" class="form-text text-muted">
-              <p>
-              Enable/disable automatic tab saving functionality.
-              </p>
-              
-              <p>
-              When enabled, the addon will periodically take a snapshot of
-              all open tabs <b>across all open browser windows</b> and save them
-              in a daily bookmark subfolder under AUTOSAVE.
-              </p>
+            <!-- Enable/Disable -->
+            <div class="card mb-3">
+              <div class="card-body">
+                <h4 class="card-title">
+                  <img src="../icons/toggles.svg" alt="Toggle" class="svg_icons_large">
+                  Enable/Disable
+                </h4>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="autosave-switch">
+                  <label class="form-check-label" for="autosave-switch">
+                    Enable automatic tab saving
+                  </label>
+                </div>
+                <div class="form-text mt-2">
+                  <p>
+                    When enabled, the addon will periodically take a snapshot of
+                    all open tabs <strong>across all open browser windows</strong> and save them
+                    in a daily bookmark subfolder under AUTOSAVE.
+                  </p>
+                  <p>
+                    Daily bookmark subfolder has title in YYYY-MM-DD format.
+                  </p>
+                </div>
+              </div>
+            </div>
 
-              <p>
-              Daily bookmark subfolder has title in YYYY-mm-dd format.
-              </p>
-            </small>
+            <!-- Interval -->
+            <div class="card mb-3">
+              <div class="card-body">
+                <h4 class="card-title">
+                  <img src="../icons/stopwatch.svg" alt="Timer" class="svg_icons_large">
+                  Interval
+                </h4>
+                <select id="autosave-options" class="form-select">
+                  <option value="1">1 minute</option>
+                  <option value="2">2 minutes</option>
+                  <option value="3">3 minutes</option>
+                  <option value="4">4 minutes</option>
+                  <option value="5">5 minutes</option>
+                  <option value="10">10 minutes</option>
+                  <option value="15">15 minutes</option>
+                  <option value="20">20 minutes</option>
+                  <option value="30">30 minutes</option>
+                  <option value="40">40 minutes</option>
+                  <option value="45">45 minutes</option>
+                  <option value="60">60 minutes</option>
+                </select>
+                <div class="form-text mt-2">
+                  <p>
+                    This option controls the interval (in minutes) between auto-save snapshots.
+                  </p>
+                  <p>
+                    The timer gets reset every time settings are updated or saved.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Overwrite -->
+            <div class="card mb-3">
+              <div class="card-body">
+                <h4 class="card-title">
+                  <img src="../icons/arrow-repeat.svg" alt="Repeat" class="svg_icons_large">
+                  Overwrite
+                </h4>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="autosave-overwrite">
+                  <label class="form-check-label" for="autosave-overwrite">
+                    Only keep most recent tabs
+                  </label>
+                </div>
+                <div class="form-text mt-2">
+                  <p>
+                    With this option checked, only the most recent tabs are saved, which is
+                    to say, only the tabs open at the time of the snapshot.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Save Pinned (Auto-save only) -->
+            <div class="card mb-3">
+              <div class="card-body">
+                <h4 class="card-title">
+                  <img src="../icons/geo.svg" alt="Pin" class="svg_icons_large">
+                  Save pinned tabs
+                </h4>
+                
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="autosave-savepinned">
+                  <label class="form-check-label" for="autosave-savepinned">
+                    Include pinned tabs in auto-save
+                  </label>
+                </div>
+                <div class="form-text">
+                  <small>When enabled, pinned tabs will be included in auto-save snapshots.</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Auto-save Root Folder Location -->
+            <div class="card mb-3">
+              <div class="card-body">
+                <h4 class="card-title">
+                  <img src="../icons/folder.svg" alt="Folder" class="svg_icons_large">
+                  Auto-save Bookmark Location
+                </h4>
+                <label for="autosave-root-folder-select" class="form-label">Save auto-save bookmarks to:</label>
+                <select id="autosave-root-folder-select" class="form-select">
+                  <option value="default">Default (Bookmarks Toolbar/Bar)</option>
+                  <option value="toolbar">Bookmarks Toolbar/Bar</option>
+                  <option value="other">Other Bookmarks</option>
+                  <option value="menu" id="autosave-menu-option">Bookmarks Menu (Firefox only)</option>
+                  <option value="custom">Custom Folder...</option>
+                </select>
+
+                <div id="autosave-custom-folder-picker" class="mt-3" style="display: none;">
+                  <label for="autosave-custom-folder-list" class="form-label">Select custom folder:</label>
+                  <select id="autosave-custom-folder-list" class="form-select">
+                    <option value="">-- Choose a folder --</option>
+                  </select>
+                  <div class="form-text">
+                    <small>Select a custom bookmark folder to use as the root location for auto-saves.</small>
+                  </div>
+                </div>
+
+                <div class="form-text mt-2">
+                  <p>
+                    Choose where to save your auto-save bookmark folders. This is separate from the location used for manual saves.
+                  </p>
+                  <p id="autosave-current-location-info" class="text-muted">
+                    <small>Current location: <span id="autosave-current-location-name">Bookmarks Toolbar</span></small>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Auto-save Retention -->
+            <div class="card mb-3">
+              <div class="card-body">
+                <h4 class="card-title">
+                  <img src="../icons/clock-history.svg" alt="Retention" class="svg_icons_large">
+                  Auto-save Retention
+                </h4>
+                
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" id="autosave-keep-limit">
+                  <label class="form-check-label" for="autosave-keep-limit">
+                    Enable auto-save folder retention limit
+                  </label>
+                </div>
+
+                <div id="autosave-retention-options">
+                  <label for="autosave-keep-days" class="form-label">Keep folders for (days):</label>
+                  <input type="number" class="form-control" id="autosave-keep-days" min="1" max="366" value="30">
+                  <div class="form-text mt-2">
+                    <p>
+                      When enabled, auto-save folders older than the specified number of days will be automatically deleted.
+                      Valid range: 1-366 days.
+                    </p>
+                    <p class="text-warning mb-0">
+                      <strong>Warning:</strong> Old folders and their bookmarks will be permanently deleted.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
-          <div class="row">&nbsp;</div>
+          <!-- Other Settings Tab -->
+          <div class="tab-pane fade" id="other-panel" role="tabpanel" aria-labelledby="other-tab">
+            
+            <!-- Close Tabs After Save -->
+            <div class="card mb-3">
+              <div class="card-body">
+                <h4 class="card-title">
+                  <img src="../icons/x-square.svg" alt="Close" class="svg_icons_large">
+                  Close tabs after saving
+                </h4>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="close-tabs-after-save-default">
+                  <label class="form-check-label" for="close-tabs-after-save-default">
+                    Default: Close all tabs after saving
+                  </label>
+                </div>
+                <div class="form-text mt-2">
+                  <p>
+                    This sets the default state for the "Close all tabs after saving" checkbox in the popup.
+                    Users can override this in the popup for each save operation.
+                  </p>
+                </div>
 
-          <div class="form-group">
-            <h4><img src="../icons/stopwatch.svg" alt="" class="svg_icons_large">&nbsp;&nbsp;&nbsp;Interval</h4>            
-            <select id="autosave-options" class="form-control options">
-              <option value="1">1 minute</option>
-              <option value="2">2 minutes</option>
-              <option value="3">3 minutes</option>
-              <option value="4">4 minutes</option>
-              <option value="5">5 minutes</option>
-              <option value="10">10 minutes</option>
-              <option value="15">15 minutes</option>
-              <option value="20">20 minutes</option>
-              <option value="30">30 minutes</option>
-              <option value="40">40 minutes</option>
-              <option value="45">45 minutes</option>
-              <option value="60">60 minutes</option>
-            </select>
-            <small id="autosave-options-help" class="form-text text-muted">
-              <p>
-              This option controls the interval (in minutes) at between auto-save snapshots.
-              </p>
+                <div class="mt-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="close-pinned-tabs">
+                    <label class="form-check-label" for="close-pinned-tabs">
+                      Also close pinned tabs when closing all tabs
+                    </label>
+                  </div>
+                  <div class="form-text">
+                    <small>
+                      When "Close all tabs after saving" is checked in the popup, this controls whether 
+                      pinned tabs are also closed. Default is to keep pinned tabs open.
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-              <p>
-              The timer gets reset every time settings are updated, saved, or the
-              first browser window gets opened.
-              </p>
-            </small>
+            <!-- Root Folder Location -->
+            <div class="card mb-3">
+              <div class="card-body">
+                <h4 class="card-title">
+                  <img src="../icons/folder-symlink.svg" alt="Folder" class="svg_icons_large">
+                  Bookmark Location
+                </h4>
+                <label for="root-folder-select" class="form-label">Save bookmarks to:</label>
+                <select id="root-folder-select" class="form-select">
+                  <option value="default">Default (Bookmarks Toolbar/Bar)</option>
+                  <option value="toolbar">Bookmarks Toolbar/Bar</option>
+                  <option value="other">Other Bookmarks</option>
+                  <option value="menu" id="menu-option">Bookmarks Menu (Firefox only)</option>
+                  <option value="custom">Custom Folder...</option>
+                </select>
+
+                <div id="custom-folder-picker" class="mt-3" style="display: none;">
+                  <label for="custom-folder-list" class="form-label">Select custom folder:</label>
+                  <select id="custom-folder-list" class="form-select">
+                    <option value="">-- Choose a folder --</option>
+                  </select>
+                  <div class="form-text">
+                    <small>Select a custom bookmark folder to use as the root location for all saves.</small>
+                  </div>
+                </div>
+
+                <div class="form-text mt-2">
+                  <p>
+                    Choose where to save your bookmark folders. This affects manual saves (not auto-save).
+                  </p>
+                  <p>
+                    <strong>Default</strong> uses the Bookmarks Toolbar (Firefox) or Bookmarks Bar (Chrome/Edge).
+                    This is the original behavior.
+                  </p>
+                  <p id="current-location-info" class="text-muted">
+                    <small>Current location: <span id="current-location-name">Bookmarks Toolbar</span></small>
+                  </p>
+                </div>
+                
+                <!-- Remember Last Folder Option -->
+                <div class="mt-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="remember-last-folder" checked>
+                    <label class="form-check-label" for="remember-last-folder">
+                      Remember last used folder
+                    </label>
+                  </div>
+                  <div class="form-text">
+                    <small>
+                      When enabled, the popup will automatically select the last folder you used for saving tabs.
+                      This saves you from having to select the same folder each time.
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Folder Name Prefix -->
+            <div class="card mb-3">
+              <div class="card-body">
+                <h4 class="card-title">
+                  <img src="../icons/tag.svg" alt="Prefix" class="svg_icons_large">
+                  Folder Name Prefix
+                </h4>
+                
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" id="prefix-enabled">
+                  <label class="form-check-label" for="prefix-enabled">
+                    Enable folder name prefix
+                  </label>
+                </div>
+
+                <div id="prefix-options">
+                  <label for="prefix-type-select" class="form-label">Prefix type:</label>
+                  <select id="prefix-type-select" class="form-select mb-3">
+                    <option value="custom">Custom text</option>
+                    <option value="date">Current date (YYYY-MM-DD)</option>
+                    <option value="datetime">Current date and time (YYYY-MM-DD HH:MM)</option>
+                    <option value="windowtitle">Window name or ID</option>
+                  </select>
+
+                  <div id="prefix-custom-input-container">
+                    <label for="prefix-custom-input" class="form-label">Custom prefix text:</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" id="prefix-custom-input" placeholder="Enter custom prefix">
+                      <button class="btn btn-outline-secondary" type="button" id="clear-prefix-custom" title="Clear input">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                          <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                        </svg>
+                      </button>
+                    </div>
+                    <div class="form-text">
+                      This text will be added at the beginning of your folder name.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-text mt-3">
+                  <p><strong>Prefix examples:</strong></p>
+                  <ul class="mb-0">
+                    <li>Custom text: "MyProject" prefix for folder name</li>
+                    <li>Current date: "2024-01-15" prefix for folder name</li>
+                    <li>Date and time: "2024-01-15 14:30" prefix for folder name</li>
+                    <li>Window name: Uses the browser window's name if set, otherwise "Window[123]"</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
           </div>
 
-          <div class="row">&nbsp;</div>
+          <!-- Documentation Tab -->
+          <div class="tab-pane fade" id="docs-panel" role="tabpanel" aria-labelledby="docs-tab">
+            
+            <!-- Keyboard Shortcuts -->
+            <div class="card mb-3">
+              <div class="card-body">
+                <h4 class="card-title">Keyboard Shortcuts</h4>
+                
+                <h5 class="mt-3">Opening the Popup</h5>
+                <p>
+                  You can configure a keyboard shortcut to open the Save my Tabs popup quickly.
+                </p>
+                
+                <div class="alert alert-info">
+                  <strong>Chrome / Edge / Brave:</strong>
+                  <ol class="mb-0 mt-2">
+                    <li>Navigate to <code>chrome://extensions/shortcuts</code> (Chrome) or <code>edge://extensions/shortcuts</code> (Edge)</li>
+                    <li>Find "Save my tabs!" in the list</li>
+                    <li>Click the pencil icon or input field next to "Open Save my tabs popup"</li>
+                    <li>Press your desired key combination (e.g., <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd>)</li>
+                    <li>The shortcut is now active</li>
+                  </ol>
+                </div>
+                
+                <div class="alert alert-success">
+                  <strong>Firefox:</strong>
+                  <p class="mb-2">
+                    The default shortcut <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> (or <kbd>Command</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> on Mac) 
+                    is usually active by default.
+                  </p>
+                  <p class="mb-0">
+                    To customize: Go to <code>about:addons</code> → Click the gear icon → Manage Extension Shortcuts
+                  </p>
+                </div>
 
-          <div class="form-group">
-            <h4><img src="../icons/clipboard-data.svg" alt="" class="svg_icons_large">&nbsp;&nbsp;&nbsp;Overwrite</h4>
-            <input id="autosave-overwrite" class="options" type="checkbox" checked>
-            <label for="autosave-overwrite">Only keep most recent tabs</label>
-            <small id="autosave-overwrite-help" class="form-text text-muted">
-              <p>
-              With this option checked, only the most recent tabs are saved, which is
-              to say, only the tabs open at the time of the snapshot.
-              </p>
-            </small>
+                <h5 class="mt-4">Suggested Shortcuts</h5>
+                <ul>
+                  <li><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> - Open popup (Windows/Linux)</li>
+                  <li><kbd>Command</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> - Open popup (Mac)</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Quick Start Guide -->
+            <div class="card mb-3">
+              <div class="card-body">
+                <h4 class="card-title">Quick Start Guide</h4>
+                
+                <h5 class="mt-3">Manual Save (Current Window)</h5>
+                <ol>
+                  <li>Click the extension icon or use your configured keyboard shortcut</li>
+                  <li>Select an existing folder or type a new folder name</li>
+                  <li>Configure options (replace content, include pinned tabs, close tabs after saving)</li>
+                  <li>Click "Save My Tabs" (left button) or press <kbd>Enter</kbd> in the folder name field</li>
+                </ol>
+
+                <h5 class="mt-3">Save All Windows</h5>
+                <ol>
+                  <li>Click the extension icon or use your configured keyboard shortcut</li>
+                  <li>Select or create a parent folder</li>
+                  <li>Configure options (same as manual save)</li>
+                  <li>Click "Save All Windows" (right button)</li>
+                  <li>Each window will be saved in a subfolder named by window name or Window[ID]</li>
+                </ol>
+                <p class="text-muted">
+                  <small>Example structure: ParentFolder → Window[123] → tabs, Window[124] → tabs</small>
+                </p>
+
+                <h5 class="mt-3">Auto-Save</h5>
+                <ol>
+                  <li>Go to the "Auto-save" tab in Settings</li>
+                  <li>Enable automatic tab saving</li>
+                  <li>Configure the interval (how often to save)</li>
+                  <li>Choose whether to overwrite or append tabs</li>
+                  <li>Optionally set retention limits to auto-delete old folders</li>
+                  <li>Tabs will be automatically saved in date-formatted folders (YYYY-MM-DD)</li>
+                  <li>Each window is organized in subfolders by window name or ID</li>
+                </ol>
+                <p class="text-muted">
+                  <small>Example structure: AUTOSAVE → 2024-11-22 → Window[123] → tabs</small>
+                </p>
+
+                <h5 class="mt-3">Folder Prefixes</h5>
+                <p>
+                  Configure automatic prefixes for your folder names in "Other Settings" → "Folder Name Prefix":
+                </p>
+                <ul>
+                  <li><strong>Custom text:</strong> Add your own prefix (e.g., "Project_")</li>
+                  <li><strong>Current date:</strong> Add date in YYYY-MM-DD format</li>
+                  <li><strong>Date and time:</strong> Add date and time (YYYY-MM-DD HH:MM)</li>
+                  <li><strong>Window name:</strong> Use the window's name or Window[ID]</li>
+                </ul>
+                <p class="text-muted">
+                  <small>The prefix appears in the folder name input and can be edited before saving.</small>
+                </p>
+
+                <h5 class="mt-3">Statistics</h5>
+                <p>
+                  View your usage statistics in the "About" tab to track:
+                </p>
+                <ul>
+                  <li>Total saves (manual + auto-save)</li>
+                  <li>Total tabs saved</li>
+                  <li>Auto-save count</li>
+                  <li>Folders created</li>
+                  <li>Last save timestamp</li>
+                </ul>
+              </div>
+            </div>
+
           </div>
 
-          <div class="form-group">
-            <h4><img src="../icons/geo.svg" alt="a" class="svg_icons_large">&nbsp;&nbsp;&nbsp;Save pinned tabs</h4>
-            <input id="autosave-savepinned" class="options" type="checkbox" checked>
-            <label for="autosave-savepinned">Save pinned tabs as well</label>
-            <small id="autosave-savepinned-help" class="form-text text-muted">
-              <p>
-              With this option checked, pinned tabs will be saved as well.
-              </p>
-            </small>
+          <!-- About Tab -->
+          <div class="tab-pane fade" id="about-panel" role="tabpanel" aria-labelledby="about-tab">
+            
+            <!-- About Section -->
+            <div class="card mb-3">
+              <div class="card-body">
+                <h4 class="card-title">About Save my Tabs!</h4>
+                
+                <p class="lead">
+                  Save my Tabs! helps you preserve your browsing sessions by saving open tabs as bookmarks.
+                </p>
+
+                <h5 class="mt-4">Version</h5>
+                <p>2.0.0 (Manifest V3)</p>
+
+                <h5 class="mt-4">Privacy</h5>
+                <p>
+                  This extension works entirely locally in your browser. No data is collected or sent to external servers.
+                </p>
+
+                <h5 class="mt-4">Key Features</h5>
+                <ul>
+                  <li>Manual Save: Save tabs from the current window to a bookmark folder of your choice</li>
+                  <li>Save All Windows: Save tabs from all open windows into organized subfolders by window name</li>
+                  <li>Auto-Save: Automatically save tabs from all windows at regular intervals with per-window organization</li>
+                  <li>Flexible Storage: Choose where to save bookmarks (Toolbar, Other Bookmarks, or Menu)</li>
+                  <li>Folder Prefixes: Automatically add prefixes to folder names (date, time, window name, or custom text)</li>
+                  <li>Retention Management: Automatically clean up old auto-save folders based on age</li>
+                  <li>Pinned Tabs Control: Choose whether to include pinned tabs in saves</li>
+                  <li>Tab Closing: Optionally close tabs after saving, with control over pinned tabs</li>
+                  <li>Keyboard Shortcuts: Quick access via customizable keyboard shortcuts</li>
+                  <li>Usage Statistics: Track your saves, tabs saved, and extension usage over time</li>
+                </ul>
+
+                <h5 class="mt-4">Links</h5>
+                <p>
+                  <strong>GitHub Repository:</strong><br>
+                  <a href="https://github.com/salvoventura/save-my-tabs" target="_blank">
+                    https://github.com/salvoventura/save-my-tabs
+                  </a>
+                </p>
+                <p>
+                  <strong>Download for Firefox:</strong><br>
+                  <a href="https://addons.mozilla.org/en-US/firefox/addon/save-all-my-tabs/" target="_blank">
+                    Firefox Add-ons Store
+                  </a>
+                </p>
+                <p>
+                  <strong>Download for Chrome/Edge:</strong><br>
+                  <a href="https://chrome.google.com/webstore/detail/save-my-tabs/kfoppgabigkfegjfafmadikhjllohfep" target="_blank">
+                    Chrome Web Store
+                  </a>
+                </p>
+
+                <div class="alert alert-success mt-4">
+                  <h5>Thank You! 💚</h5>
+                  <p class="mb-0">
+                    Thank you for using Save my Tabs! Your support means everything. If you find this extension helpful, 
+                    please consider rating it on the store and sharing it with others. Your feedback helps make this 
+                    extension better for everyone.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Usage Statistics Section -->
+            <div class="card mb-3">
+              <div class="card-body">
+                <h4 class="card-title">Usage Statistics</h4>
+                <p class="text-muted">Track your tab saving activity</p>
+
+                <div class="row mt-4">
+                  <div class="col-md-6 mb-3">
+                    <div class="card bg-light">
+                      <div class="card-body text-center">
+                        <h5 class="card-title">Total Saves</h5>
+                        <h2 class="display-4" id="stat-total-saves">0</h2>
+                        <p class="text-muted mb-0">Manual and auto-saves combined</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <div class="card bg-light">
+                      <div class="card-body text-center">
+                        <h5 class="card-title">Tabs Saved</h5>
+                        <h2 class="display-4" id="stat-tabs-saved">0</h2>
+                        <p class="text-muted mb-0">Total tabs bookmarked</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <div class="card bg-light">
+                      <div class="card-body text-center">
+                        <h5 class="card-title">Auto-Saves</h5>
+                        <h2 class="display-4" id="stat-auto-saves">0</h2>
+                        <p class="text-muted mb-0">Automatic snapshots taken</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <div class="card bg-light">
+                      <div class="card-body text-center">
+                        <h5 class="card-title">Folders Created</h5>
+                        <h2 class="display-4" id="stat-folders-created">0</h2>
+                        <p class="text-muted mb-0">Bookmark folders generated</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <div class="card bg-light">
+                      <div class="card-body text-center">
+                        <h5 class="card-title">Last Save</h5>
+                        <p class="h5 mt-3" id="stat-last-save">Never</p>
+                        <p class="text-muted mb-0">Most recent save operation</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <div class="card bg-light">
+                      <div class="card-body text-center">
+                        <h5 class="card-title">Extension Installed</h5>
+                        <p class="h5 mt-3" id="stat-install-date">-</p>
+                        <p class="text-muted mb-0">First installation date</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-center mt-3">
+                  <button class="btn btn-outline-secondary btn-sm" id="reset-stats">Reset Statistics</button>
+                </div>
+              </div>
+            </div>
+
           </div>
-
-          <div class="row">&nbsp;</div>
-
-          <div class="form-group">
-            <button id="btnSave" class="btn btn-primary">Save</button>
-          </div>
-
-          <small class="form-text text-muted">
-            <hr>
-            Version 1.2.3. Find us on <a href="https://github.com/salvoventura/save-my-tabs" target="_blank">GitHub</a>.
-
-            Please take a moment and help spread the word by rating Save-my-tabs!
-
-            <a id="ratinglink-firefox" href="https://addons.mozilla.org/en-US/firefox/addon/save-all-my-tabs/" target="_blank">
-              For Firefox click here.
-            </a>
-            <img src="../icons/heart-fill.svg" alt="">
-            <a id="ratinglink-chrome" href="https://chrome.google.com/webstore/detail/save-my-tabs/kfoppgabigkfegjfafmadikhjllohfep" target="_blank">
-              For Google Chrome and Microsoft Edge click here.
-            </a>
-            <img src="../icons/heart-fill.svg" alt="">
-            Thank you for your support!
-          </small>
 
         </div>
+
+        <!-- Status Message -->
+        <div id="status-message" class="alert d-none" role="alert"></div>
+
       </div>
     </div>
+  </div>
 
-    <script src="../lib/browser-polyfill.min.js"></script>
-    <script src="../lib/common.js"></script>
-    <script src="options.js"></script>
-  </body>
+  <script src="../lib/browser-polyfill.min.js"></script>
+  <script src="../lib/bootstrap.bundle.min.js"></script>
+  <script type="module" src="options.js"></script>
+</body>
 </html>
-
