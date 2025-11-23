@@ -36,9 +36,9 @@ USAGE
 #####
 Once installed, a new icon button will appear in the browser toolbar. The tooltip displays **Save my tabs!**. Click on the button, and a popup will open. Here you will be given the option to select an existing bookmark folder, create a new folder from a suggested preset name (in green), or use a custom folder name by typing it in the edit box. Then simply press the *Save my tabs* button and once the popup closes, the job is done!
 
-.. image:: icon-snapshot.png
+.. image:: img/icon-snapshot.png
 
-.. image:: popup-snapshot.png
+.. image:: img/popup-snapshot.png
 
 .. note:: Input in the **Create new folder** box will have precedence over any selected value.
 
@@ -50,7 +50,7 @@ Preset names
 ------------
 The preset names options will show up last and in green in the select list. You will notice that these are date-specific, which I thought would be a useful shortcut for grouping tabs in a chronological manner.
 
-.. image:: popup-options-names.png
+.. image:: img/popup-options-names.png
 
 Replace folder content
 ======================
@@ -60,11 +60,11 @@ Options (Autosave)
 ==================
 On the top right corner of the Save my Tabs popup, you will find a gear icon: click on it and the *Options* panel will open. Currently, the only options available are to control the **autosave** feature. 
 
-.. image:: options-icon-snapshot.png
+.. image:: img/options-icon-snapshot.png
 
 Options are described in detail on the panel. Essentially, you can specify a time interval at which the addon will bookmark all the open tabs **across all browser windows** into a daily folder. These folders are created under a bookmark folder called AUTOSAVE.
 
-.. image:: options-panel-snapshot.png
+.. image:: img/options-panel-snapshot.png
 
 
 ###########
