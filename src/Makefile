@@ -7,6 +7,7 @@ VERSION = 2.0.0
 BUILD_DIR = build
 DIST_DIR = dist
 CHROME_ZIP = $(EXTENSION_NAME)-chrome-$(VERSION).zip
+FIREFOX_XPI = $(EXTENSION_NAME)-firefox-$(VERSION).xpi
 FIREFOX_ZIP = $(EXTENSION_NAME)-firefox-$(VERSION).zip
 
 # Source directories and files
@@ -37,15 +38,16 @@ help:
 	@echo ""
 	@echo "Output:"
 	@echo "  Chrome:  $(DIST_DIR)/$(CHROME_ZIP)"
-	@echo "  Firefox: $(DIST_DIR)/$(FIREFOX_ZIP)"
+	@echo "  Firefox: $(DIST_DIR)/$(FIREFOX_XPI) and $(DIST_DIR)/$(FIREFOX_ZIP)"
 
 # Build both distributions
 dist: dist-chrome dist-firefox
 	@echo ""
 	@echo "=========================================="
 	@echo "Both packages created successfully!"
-	@echo "Chrome:  $(DIST_DIR)/$(CHROME_ZIP) ($$(du -h $(DIST_DIR)/$(CHROME_ZIP) | cut -f1))"
-	@echo "Firefox: $(DIST_DIR)/$(FIREFOX_ZIP) ($$(du -h $(DIST_DIR)/$(FIREFOX_ZIP) | cut -f1))"
+	@echo "Chrome:  $(DIST_DIR)/$(CHROME_ZIP) ($(du -h $(DIST_DIR)/$(CHROME_ZIP) | cut -f1))"
+	@echo "Firefox: $(DIST_DIR)/$(FIREFOX_XPI) ($(du -h $(DIST_DIR)/$(FIREFOX_XPI) | cut -f1))"
+	@echo "         $(DIST_DIR)/$(FIREFOX_ZIP) ($(du -h $(DIST_DIR)/$(FIREFOX_ZIP) | cut -f1))"
 	@echo "=========================================="
 
 # Create Chrome build directory
@@ -103,14 +105,20 @@ dist-chrome: build-chrome
 # Create Firefox distributable ZIP package
 dist-firefox: build-firefox
 	@echo ""
-	@echo "Creating Firefox distribution package..."
+	@echo "Creating Firefox distribution packages..."
 	@mkdir -p $(DIST_DIR)
+	
+	@cd $(BUILD_DIR)/firefox && \
+		zip -r ../../$(DIST_DIR)/$(FIREFOX_XPI) . \
+		-x $(EXCLUDE_PATTERNS)
 	
 	@cd $(BUILD_DIR)/firefox && \
 		zip -r ../../$(DIST_DIR)/$(FIREFOX_ZIP) . \
 		-x $(EXCLUDE_PATTERNS)
 	
-	@echo "Firefox package created: $(DIST_DIR)/$(FIREFOX_ZIP)"
+	@echo "Firefox packages created:"
+	@echo "  - $(DIST_DIR)/$(FIREFOX_XPI) (for Firefox installation)"
+	@echo "  - $(DIST_DIR)/$(FIREFOX_ZIP) (for AMO submission)"
 
 # Clean build artifacts
 clean:
