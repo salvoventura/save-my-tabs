@@ -8,6 +8,12 @@
     "32": "icons/iconfinder_tab_new_raised_18931.png"
   },
 
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "save-my-tabs@salvoventura"
+    }
+  },
+
   "permissions": [
     "bookmarks",
     "tabs",
