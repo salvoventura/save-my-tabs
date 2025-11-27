@@ -85,8 +85,11 @@ build-firefox:
 		fi \
 	done
 	
-	@echo "Copying Firefox manifest.json..."
-	@cp manifest.json $(BUILD_DIR)/firefox/manifest.json
+	@echo "Creating Firefox manifest.json..."
+	@cat manifest.json | \
+		jq 'del(.background.service_worker)' > $(BUILD_DIR)/firefox/manifest.json || \
+		(cat manifest.json > $(BUILD_DIR)/firefox/manifest.json && \
+		 echo "  ⚠ jq not found, using original manifest (may have warnings)")
 	
 	@echo "Firefox build directory created successfully!"
 
