@@ -1,9 +1,15 @@
 /**
- * Save My Tabs - Custom Styles
- * Version: 2.0.0
- * Bootstrap 5 compatible
+ * Save My Tabs
+ * File: css/common.css
+ * 
+ * Author: Salvatore Ventura <salvoventura@gmail.com>
+ * Copyright 2025 Salvatore Ventura <salvoventura@gmail.com>
+ * Code assisted by Claude.ai
+ * 
+ * Purpose: Common styles shared across popup and options pages, including
+ *          Bootstrap 5 customizations and dark mode support
  */
-
+ 
 html, body {
   padding: 5px;
   min-width: 350px; /* chrome was making it too narrow */

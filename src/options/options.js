@@ -1,9 +1,14 @@
 /******************************************************************************
-  AddOn   : Save my tabs!
-  Purpose : Options page script for Manifest V3
-  Version : 2.0.0
-            Refactored with ES6 modules and auto-save functionality
-******************************************************************************/
+ * Save My Tabs
+ * File: options/options.js
+ * 
+ * Author: Salvatore Ventura <salvoventura@gmail.com>
+ * Copyright 2025 Salvatore Ventura <salvoventura@gmail.com>
+ * Code assisted by Claude.ai
+ * 
+ * Purpose: Options page script - handles settings UI, auto-save configuration,
+ *          folder selection, statistics display, and user preferences
+ ******************************************************************************/
 
 import { StorageService } from '../lib/storage.js';
 import { BrowserDetection } from '../lib/browser-detection.js';

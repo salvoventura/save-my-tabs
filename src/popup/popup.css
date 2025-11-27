@@ -1,9 +1,15 @@
 /**
- * Save My Tabs - Popup Styles
- * Version: 2.0.0
- * Location: popup/popup.css
+ * Save My Tabs
+ * File: popup/popup.css
+ * 
+ * Author: Salvatore Ventura <salvoventura@gmail.com>
+ * Copyright 2025 Salvatore Ventura <salvoventura@gmail.com>
+ * Code assisted by Claude.ai
+ * 
+ * Purpose: Styles for the browser action popup including header, folder
+ *          selection, save buttons, and compact responsive layout
  */
-
+ 
 body {
   width: 380px;
   padding: 0;

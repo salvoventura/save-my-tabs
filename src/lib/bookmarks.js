@@ -1,8 +1,14 @@
 /******************************************************************************
-  Module  : bookmarks.js
-  Purpose : Handle all bookmark-related operations
-  Version : 2.0.0 (Manifest V3)
-******************************************************************************/
+ * Save My Tabs
+ * File: lib/bookmarks.js
+ * 
+ * Author: Salvatore Ventura <salvoventura@gmail.com>
+ * Copyright 2025 Salvatore Ventura <salvoventura@gmail.com>
+ * Code assisted by Claude.ai
+ * 
+ * Purpose: Bookmark service module - handles all browser.bookmarks API
+ *          operations including folder creation, retrieval, and management
+ ******************************************************************************/
 
 import { BrowserDetection } from './browser-detection.js';
 

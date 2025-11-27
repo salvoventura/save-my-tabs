@@ -1,8 +1,14 @@
 /******************************************************************************
-  Module  : utils.js
-  Purpose : Utility functions
-  Version : 2.0.0 (Manifest V3)
-******************************************************************************/
+ * Save My Tabs
+ * File: lib/utils.js
+ * 
+ * Author: Salvatore Ventura <salvoventura@gmail.com>
+ * Copyright 2025 Salvatore Ventura <salvoventura@gmail.com>
+ * Code assisted by Claude.ai
+ * 
+ * Purpose: Utility functions for date/time formatting, debouncing, and
+ *          general helper methods used across the extension
+ ******************************************************************************/
 
 /**
  * Utility functions

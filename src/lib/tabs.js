@@ -1,8 +1,15 @@
 /******************************************************************************
-  Module  : tabs.js
-  Purpose : Handle all tab-related operations
-  Version : 2.0.0 (Manifest V3)
-******************************************************************************/
+ * Save My Tabs
+ * File: lib/tabs.js
+ * 
+ * Author: Salvatore Ventura <salvoventura@gmail.com>
+ * Copyright 2025 Salvatore Ventura <salvoventura@gmail.com>
+ * Code assisted by Claude.ai
+ * 
+ * Purpose: Tabs service module - handles tab querying, filtering, saving to
+ *          bookmarks, and closing operations
+ ******************************************************************************/
+
 
 import { CONSTANTS } from './browser-detection.js';
 import { BookmarksService } from './bookmarks.js';

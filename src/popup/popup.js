@@ -1,9 +1,14 @@
 /******************************************************************************
-  AddOn   : Save my tabs!
-  Purpose : Popup script for Manifest V3
-  Version : 2.0.0
-            Refactored with ES6 modules
-******************************************************************************/
+ * Save My Tabs
+ * File: popup/popup.js
+ * 
+ * Author: Salvatore Ventura <salvoventura@gmail.com>
+ * Copyright 2025 Salvatore Ventura <salvoventura@gmail.com>
+ * Code assisted by Claude.ai
+ * 
+ * Purpose: Popup script - handles main extension UI, folder selection,
+ *          tab saving for current window and all windows, and user interactions
+ ******************************************************************************/
 
 import { BookmarksService } from '../lib/bookmarks.js';
 import { TabsService } from '../lib/tabs.js';

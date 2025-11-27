@@ -1,8 +1,14 @@
 /******************************************************************************
-  Module  : storage.js
-  Purpose : Handle all storage-related operations
-  Version : 2.0.0 (Manifest V3)
-******************************************************************************/
+ * Save My Tabs
+ * File: lib/storage.js
+ * 
+ * Author: Salvatore Ventura <salvoventura@gmail.com>
+ * Copyright 2025 Salvatore Ventura <salvoventura@gmail.com>
+ * Code assisted by Claude.ai
+ * 
+ * Purpose: Storage service module - handles all browser.storage operations
+ *          including settings persistence and statistics tracking
+ ******************************************************************************/
 
 /**
  * Default settings for the extension

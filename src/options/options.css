@@ -1,9 +1,15 @@
 /**
- * Save My Tabs - Options Page Styles
- * Version: 2.0.0
- * Location: options/options.css
+ * Save My Tabs
+ * File: options/options.css
+ * 
+ * Author: Salvatore Ventura <salvoventura@gmail.com>
+ * Copyright 2025 Salvatore Ventura <salvoventura@gmail.com>
+ * Code assisted by Claude.ai
+ * 
+ * Purpose: Styles for the options/settings page including tabs, cards,
+ *          form controls, and responsive design with dark mode support
  */
-
+ 
 /* Page Layout */
 body {
   background-color: #f8f9fa;

@@ -1,3 +1,15 @@
+/******************************************************************************
+ * Save My Tabs
+ * File: background/background.js
+ * 
+ * Author: Salvatore Ventura <salvoventura@gmail.com>
+ * Copyright 2025 Salvatore Ventura <salvoventura@gmail.com>
+ * Code assisted by Claude.ai
+ * 
+ * Purpose: Background service worker for Manifest V3 - handles auto-save
+ *          alarms, cleanup of old auto-save folders, and extension lifecycle
+ ******************************************************************************/
+
 /**
  * Check if a folder name matches the date format YYYY-MM-DD
  */

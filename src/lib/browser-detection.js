@@ -1,8 +1,14 @@
 /******************************************************************************
-  Module  : browser-detection.js
-  Purpose : Detect browser and provide browser-specific constants
-  Version : 2.0.0 (Manifest V3)
-******************************************************************************/
+ * Save My Tabs
+ * File: lib/browser-detection.js
+ * 
+ * Author: Salvatore Ventura <salvoventura@gmail.com>
+ * Copyright 2025 Salvatore Ventura <salvoventura@gmail.com>
+ * Code assisted by Claude.ai
+ * 
+ * Purpose: Browser detection utilities and constants - provides cross-browser
+ *          compatibility for Firefox, Chrome, Edge, and other browsers
+ ******************************************************************************/
 
 /**
  * Browser detection and constants
