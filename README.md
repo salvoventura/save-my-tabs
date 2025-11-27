@@ -129,6 +129,8 @@ Choose where auto-save folders are created:
 - Bookmarks Menu (Firefox only)
 - Custom Folder (select any bookmark folder)
 
+![Options Panel Auto-save snapshot](img/options-panel-snapshot-auto-save.png)
+
 **Auto-save Retention**  
 Automatically delete auto-save folders older than a specified number of days (1-366)  
 This helps prevent bookmark clutter from accumulating over time
@@ -147,7 +149,7 @@ AUTOSAVE/
         └── Tab 4
 ```
 
-![Options Panel Snapshot](img/options-panel-snapshot.png)
+![Options Panel Other settings snapshot](img/options-panel-snapshot-other-settings.png)
 
 ### Other Settings
 
@@ -187,69 +189,6 @@ Track your usage in the About tab:
 - Extension install date
 
 Statistics can be reset at any time.
-
-## Development
-
-This browser addon has been completely rewritten for Manifest V3, with a modern ES6 modular architecture and enhanced features.
-
-### Installation for Development
-
-To install during development:
-
-**Chrome:**
-1. Navigate to `chrome://extensions/`
-2. Enable "Developer mode"
-3. Click "Load unpacked"
-4. Select the extension directory
-
-**Firefox:**
-1. Navigate to `about:debugging#/runtime/this-firefox`
-2. Click "Load Temporary Add-on"
-3. Select the `manifest.json` file
-
-### Building Distribution Packages
-
-The project includes a Makefile for building distributable packages:
-
-**Requirements:**
-- `zip` utility
-- `jq` (recommended for manifest manipulation)
-
-**Commands:**
-```bash
-make              # Build both Chrome and Firefox packages
-make dist-chrome  # Build only Chrome package
-make dist-firefox # Build only Firefox package
-make clean        # Remove build artifacts
-make validate     # Validate manifest.json
-make help         # Show help
-```
-
-**Output:**
-- `dist/save-my-tabs-chrome-2.0.0.zip` - For Chrome Web Store
-- `dist/save-my-tabs-firefox-2.0.0.zip` - For Firefox Add-ons
-
-The Makefile automatically handles the differences in manifest requirements between browsers.
-
-### Architecture
-
-The codebase is organized into modular ES6 modules:
-
-**Core Modules (lib/):**
-- `bookmarks.js` - Bookmark operations wrapper
-- `browser-detection.js` - Cross-browser compatibility
-- `storage.js` - Settings and statistics management
-- `tabs.js` - Tab querying and filtering
-- `utils.js` - Utility functions
-
-**UI Components:**
-- `popup/` - Main popup interface
-- `options/` - Settings/options page
-- `background/` - Service worker for auto-save and alarms
-
-**Styling:**
-- Bootstrap 5 for UI components
-- Custom CSS for extension-specific styling
 
 ## Version History
 
