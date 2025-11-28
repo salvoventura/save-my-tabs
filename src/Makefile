@@ -65,7 +65,7 @@ build-chrome: clean
 	
 	@echo "Creating Chrome manifest.json..."
 	@cat manifest.json | \
-		jq 'del(.background.scripts)' > $(BUILD_DIR)/chrome/manifest.json || \
+		jq 'del(.background.scripts, .data_collection_permissions)' > $(BUILD_DIR)/chrome/manifest.json || \
 		(cat manifest.json > $(BUILD_DIR)/chrome/manifest.json && \
 		 echo "  ⚠ jq not found, using original manifest (may have warnings)")
 	
