@@ -9,6 +9,13 @@
  * Purpose: Background service worker for Manifest V3 - handles auto-save
  *          alarms, cleanup of old auto-save folders, and extension lifecycle
  ******************************************************************************/
+//importScripts('../lib/browser-polyfill.min.js');
+// Polyfill for Chrome/Edge
+if (typeof browser === 'undefined') {
+  globalThis.browser = chrome;
+}
+
+const AUTOSAVE_ROOT_NAME = "AUTOSAVE";
 
 /**
  * Check if a folder name matches the date format YYYY-MM-DD
@@ -82,17 +89,6 @@ async function cleanupOldAutoSaveFolders(autoSaveRootId, keepDays) {
   }
 }
 
-/******************************************************************************
-  Author  : Salvatore Ventura <salvoventura@gmail.com>
-  AddOn   : Save my tabs!
-  Purpose : Background service worker for Manifest V3
-  Version : 2.0.0
-            Converted to Manifest V3 - NO ES6 modules in service worker
-******************************************************************************/
-
-importScripts('../lib/browser-polyfill.min.js');
-
-const AUTOSAVE_ROOT_NAME = "AUTOSAVE";
 
 /**
  * Get root folder ID based on user preference
