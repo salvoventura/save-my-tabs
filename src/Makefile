@@ -1,9 +1,9 @@
 # Save My Tabs - Makefile
-# Version: 2.0.0
+# Version: 2.0.1
 
 # Variables
 EXTENSION_NAME = save-my-tabs
-VERSION = 2.0.0
+VERSION = 2.0.1
 BUILD_DIR = build
 DIST_DIR = dist
 CHROME_ZIP = $(EXTENSION_NAME)-chrome-$(VERSION).zip
