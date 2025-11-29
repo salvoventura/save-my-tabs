@@ -9,7 +9,6 @@
  * Purpose: Background service worker for Manifest V3 - handles auto-save
  *          alarms, cleanup of old auto-save folders, and extension lifecycle
  ******************************************************************************/
-//importScripts('../lib/browser-polyfill.min.js');
 // Polyfill for Chrome/Edge
 if (typeof browser === 'undefined') {
   globalThis.browser = chrome;

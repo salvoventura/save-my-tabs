@@ -192,6 +192,9 @@ Statistics can be reset at any time.
 
 ## Version History
 
+### 2.0.1 
+- Bugfix for #21 Auto-save broken in v2.0.0
+
 ### 2.0.0 (Manifest V3)
 - Complete rewrite for Manifest V3 compatibility
 - Migrated to ES6 modules with modern architecture
