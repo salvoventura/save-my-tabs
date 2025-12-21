@@ -12,7 +12,7 @@
  
 html, body {
   padding: 5px;
-  min-width: 350px; /* chrome was making it too narrow */
+  min-width: 360px; /* chrome was making it too narrow */
   min-height: auto;
 }
 

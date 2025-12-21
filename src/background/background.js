@@ -4,17 +4,23 @@
  * 
  * Author: Salvatore Ventura <salvoventura@gmail.com>
  * Copyright 2025 Salvatore Ventura <salvoventura@gmail.com>
- * Code assisted by Claude.ai
+ * Code assisted by Claude.ai and Cursor.
  * 
  * Purpose: Background service worker for Manifest V3 - handles auto-save
- *          alarms, cleanup of old auto-save folders, and extension lifecycle
+ *          alarms, cleanup of old auto-save folders, context menus, and
+ *          extension lifecycle
  ******************************************************************************/
-// Polyfill for Chrome/Edge
-if (typeof browser === 'undefined') {
+
+// Polyfill for Chrome compatibility
+if (typeof browser === "undefined") {
   globalThis.browser = chrome;
 }
 
 const AUTOSAVE_ROOT_NAME = "AUTOSAVE";
+
+/******************************************************************************
+ * Date and Folder Utilities
+ ******************************************************************************/
 
 /**
  * Check if a folder name matches the date format YYYY-MM-DD
@@ -40,6 +46,149 @@ function parseDateFromFolder(folderName) {
     console.error(`Error parsing date from folder name: ${error.message}`);
   }
   return null;
+}
+
+/**
+ * Get current date in YYYY-MM-DD format
+ */
+function getCurrentDate() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * Check if URL is a new tab page
+ */
+function isNewTabUrl(url) {
+  const normalized = url.replace(/\/+$/, '').toLowerCase();
+  const newTabUrls = [
+    "chrome://newtab", "chrome-search://local-ntp/local-ntp.html",
+    "chrome://startpage", "chrome://blank", "chrome://home",
+    "edge://newtab", "brave://newtab", "opera://startpage",
+    "vivaldi://newtab", "about:newtab", "about:blank", "about:home", ""
+  ];
+  return newTabUrls.includes(normalized);
+}
+
+/******************************************************************************
+ * Browser Detection
+ ******************************************************************************/
+
+/**
+ * Detect if running in Firefox
+ */
+async function isFirefoxBrowser() {
+  try {
+    await browser.bookmarks.get("toolbar_____");
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Get root folder ID based on user preference
+ */
+async function getRootFolderId(preference = "default", customFolderId = null) {
+  const isFirefox = await isFirefoxBrowser();
+  
+  if (preference === "custom" && customFolderId) {
+    return customFolderId;
+  }
+  
+  if (preference === "custom" && !customFolderId) {
+    console.warn('Custom folder selected but no ID provided, using default');
+    return isFirefox ? "toolbar_____" : "1";
+  }
+  
+  if (preference === "default" || preference === "toolbar") {
+    return isFirefox ? "toolbar_____" : "1";
+  } else if (preference === "other") {
+    return isFirefox ? "unfiled_____" : "2";
+  } else if (preference === "menu" && isFirefox) {
+    return "menu________";
+  }
+  
+  return isFirefox ? "toolbar_____" : "1";
+}
+
+/******************************************************************************
+ * Storage and Settings
+ ******************************************************************************/
+
+/**
+ * Get saved options from storage
+ */
+async function getSavedOptions() {
+  try {
+    const saved = await browser.storage.local.get("settings");
+    const options = new Map();
+
+    if (saved.settings !== undefined) {
+      options.set('autosave', saved.settings.autosave);
+      options.set('interval', saved.settings.interval);
+      options.set('overwrite', saved.settings.overwrite);
+      options.set('savepinned', saved.settings.savepinned);
+      options.set('rootfolder', saved.settings.rootfolder || 'default');
+      options.set('autosaverootfolder', saved.settings.autosaverootfolder || 'default');
+      options.set('customautosaverootfolder', saved.settings.customautosaverootfolder || null);
+      options.set('autosavekeeplimit', saved.settings.autosavekeeplimit || false);
+      options.set('autosavekeepdays', saved.settings.autosavekeepdays || 30);
+    } else {
+      options.set('autosave', false);
+      options.set('interval', "5");
+      options.set('overwrite', false);
+      options.set('savepinned', false);
+      options.set('rootfolder', 'default');
+      options.set('autosaverootfolder', 'default');
+      options.set('customautosaverootfolder', null);
+      options.set('autosavekeeplimit', false);
+      options.set('autosavekeepdays', 30);
+    }
+
+    return options;
+  } catch (error) {
+    console.error(`Error in getSavedOptions: ${error.message}`);
+    throw error;
+  }
+}
+
+/******************************************************************************
+ * Bookmark Operations
+ ******************************************************************************/
+
+/**
+ * Get folder ID by name, create if needed
+ */
+async function getFolderId(folderName, rootId = null) {
+  try {
+    let folderId = null;
+    const results = await browser.bookmarks.search({ title: folderName });
+
+    if (results.length) {
+      folderId = results[0].id;
+      console.log(`Found ${folderName} with id ${folderId}`);
+    } else {
+      console.log(`Folder ${folderName} not found`);
+      if (rootId !== null) {
+        console.log(`Creating ${folderName}`);
+        const creation = await browser.bookmarks.create({
+          parentId: rootId,
+          title: folderName,
+          url: null
+        });
+        folderId = creation.id;
+      }
+    }
+
+    return folderId;
+  } catch (error) {
+    console.error(`Error in getFolderId: ${error.message}`);
+    throw error;
+  }
 }
 
 /**
@@ -88,122 +237,104 @@ async function cleanupOldAutoSaveFolders(autoSaveRootId, keepDays) {
   }
 }
 
-
 /**
- * Get root folder ID based on user preference
+ * Filter tabs based on settings (ignore pinned when disabled, and new tab URLs).
  */
-function getRootFolderId(preference = "default", customFolderId = null) {
-  const isFirefox = typeof InstallTrigger !== 'undefined';
-  
-  if (preference === "custom" && customFolderId) {
-    return customFolderId;
-  }
-  
-  if (preference === "custom" && !customFolderId) {
-    console.warn('Custom folder selected but no ID provided, using default');
-    return isFirefox ? "toolbar_____" : "1";
-  }
-  
-  if (preference === "default" || preference === "toolbar") {
-    return isFirefox ? "toolbar_____" : "1";
-  } else if (preference === "other") {
-    return isFirefox ? "unfiled_____" : "2";
-  } else if (preference === "menu" && isFirefox) {
-    return "menu________";
-  }
-  
-  return isFirefox ? "toolbar_____" : "1";
+function filterSavableTabs(tabs, options) {
+  const savepinned = options.get('savepinned') || false;
+  return tabs.filter(tab => {
+    if (tab.pinned && !savepinned) return false;
+    if (isNewTabUrl(tab.url)) return false;
+    return true;
+  });
 }
 
 /**
- * Get current date in YYYY-MM-DD format
+ * Upsert bookmarks for a set of tabs into a folder, honoring overwrite.
  */
-function getCurrentDate() {
-  const now = new Date(new Date().toString().split('GMT')[0] + ' UTC');
-  const iso = now.toISOString();
-  return iso.split('T')[0];
-}
+async function upsertBookmarks(folderId, tabsToSave, overwrite) {
+  const savedBookmarks = await browser.bookmarks.getChildren(folderId);
+  const existingBookmarks = new Map();
 
-/**
- * Get saved options from storage
- */
-async function getSavedOptions() {
-  try {
-    const saved = await browser.storage.local.get("settings");
-    const options = new Map();
-
-    if (saved.settings !== undefined) {
-      options.set('autosave', saved.settings.autosave);
-      options.set('interval', saved.settings.interval);
-      options.set('overwrite', saved.settings.overwrite);
-      options.set('savepinned', saved.settings.savepinned);
-      options.set('rootfolder', saved.settings.rootfolder || 'default');
-      options.set('autosaverootfolder', saved.settings.autosaverootfolder || 'default');
-      options.set('customautosaverootfolder', saved.settings.customautosaverootfolder || null);
-      options.set('autosavekeeplimit', saved.settings.autosavekeeplimit || false);
-      options.set('autosavekeepdays', saved.settings.autosavekeepdays || 30);
-    } else {
-      options.set('autosave', false);
-      options.set('interval', "5");
-      options.set('overwrite', false);
-      options.set('savepinned', false);
-      options.set('rootfolder', 'default');
-      options.set('autosaverootfolder', 'default');
-      options.set('customautosaverootfolder', null);
-      options.set('autosavekeeplimit', false);
-      options.set('autosavekeepdays', 30);
-    }
-
-    return options;
-  } catch (error) {
-    console.error(`Error in getSavedOptions: ${error.message}`);
-    throw error;
+  for (const bookmark of savedBookmarks) {
+    existingBookmarks.set(bookmark.url, bookmark.title);
   }
-}
 
-/**
- * Get folder ID by name, create if needed
- */
-async function getFolderId(folderName, rootId = null) {
-  try {
-    let folderId = null;
-    const results = await browser.bookmarks.search({ title: folderName });
-
-    if (results.length) {
-      folderId = results[0].id;
-      console.log(`Found ${folderName} with id ${folderId}`);
-    } else {
-      console.log(`Folder ${folderName} not found`);
-      if (rootId !== null) {
-        console.log(`Creating ${folderName}`);
-        const creation = await browser.bookmarks.create({
-          parentId: rootId,
-          title: folderName,
-          url: null
+  if (!overwrite) {
+    for (const tab of tabsToSave) {
+      if (!existingBookmarks.has(tab.url)) {
+        await browser.bookmarks.create({
+          parentId: folderId,
+          title: tab.title,
+          url: tab.url
         });
-        folderId = creation.id;
       }
     }
+    return;
+  }
 
-    return folderId;
-  } catch (error) {
-    console.error(`Error in getFolderId: ${error.message}`);
-    throw error;
+  // Overwrite mode: remove extras, add missing.
+  const desiredBookmarks = new Map();
+  for (const tab of tabsToSave) {
+    desiredBookmarks.set(tab.url, tab.title);
+  }
+
+  for (const bookmark of savedBookmarks) {
+    if (desiredBookmarks.has(bookmark.url)) {
+      desiredBookmarks.delete(bookmark.url);
+    } else {
+      await browser.bookmarks.remove(bookmark.id);
+    }
+  }
+
+  for (const [url, title] of desiredBookmarks) {
+    await browser.bookmarks.create({
+      parentId: folderId,
+      title: title,
+      url: url
+    });
   }
 }
 
 /**
- * Check if URL is a new tab page
+ * Format a window folder name from titlePreface or fall back to Window[ID].
+ * Ensures a single pair of brackets around the name.
  */
-function isNewTabUrl(url) {
-  const normalized = url.replace(/\/+$/, '').toLowerCase();
-  const newTabUrls = [
-    "chrome://newtab", "chrome-search://local-ntp/local-ntp.html",
-    "chrome://startpage", "chrome://blank", "chrome://home",
-    "edge://newtab", "brave://newtab", "opera://startpage",
-    "vivaldi://newtab", "about:newtab", "about:blank", "about:home", ""
-  ];
-  return newTabUrls.includes(normalized);
+function formatWindowFolderName(window) {
+  if (window.titlePreface) {
+    const nameWithoutBrackets = window.titlePreface.replace(/^\[|\]$/g, '').trim();
+    return `[${nameWithoutBrackets}]`;
+  }
+  return `Window[${window.id}]`;
+}
+
+/**
+ * Set window titlePreface with retries (Firefox). No-ops if unsupported.
+ */
+async function setWindowTitlePrefaceWithRetry(windowId, folderName) {
+  // Remove existing brackets to avoid double wrapping.
+  const cleanFolderName = folderName.replace(/^\[|\]$/g, '').trim();
+  const titlePreface = `[${cleanFolderName}] `;
+  const maxRetries = 5;
+  let retryCount = 0;
+
+  while (retryCount < maxRetries) {
+    try {
+      await browser.windows.update(windowId, { titlePreface });
+      const windowInfo = await browser.windows.get(windowId);
+      if (windowInfo.titlePreface === titlePreface) {
+        console.log(`Set window titlePreface to: ${titlePreface} (attempt ${retryCount + 1})`);
+        return;
+      }
+      console.log(`titlePreface not set correctly, retrying... (attempt ${retryCount + 1})`);
+    } catch (error) {
+      console.warn(`Could not set window titlePreface (attempt ${retryCount + 1}):`, error.message);
+    }
+    retryCount++;
+    await new Promise(resolve => setTimeout(resolve, 200));
+  }
+
+  console.error("Failed to set window titlePreface after all retries");
 }
 
 /**
@@ -212,7 +343,6 @@ function isNewTabUrl(url) {
 async function saveTabsToFolder(folderId, options, tabsQuery = {}) {
   try {
     const overwrite = options.get('overwrite') || false;
-    const savepinned = options.get('savepinned') || false;
 
     const allTabs = await browser.tabs.query(tabsQuery);
     
@@ -226,56 +356,14 @@ async function saveTabsToFolder(folderId, options, tabsQuery = {}) {
       return;
     }
 
-    const tabsToSave = allTabs.filter(tab => {
-      if (tab.pinned && !savepinned) return false;
-      if (isNewTabUrl(tab.url)) return false;
-      return true;
-    });
+    const tabsToSave = filterSavableTabs(allTabs, options);
 
     if (tabsToSave.length === 0) {
       console.log('No tabs to save after filtering');
       return;
     }
 
-    const savedBookmarks = await browser.bookmarks.getChildren(folderId);
-    const existingBookmarks = new Map();
-    
-    for (const bookmark of savedBookmarks) {
-      existingBookmarks.set(bookmark.url, bookmark.title);
-    }
-
-    if (!overwrite) {
-      for (const tab of tabsToSave) {
-        if (!existingBookmarks.has(tab.url)) {
-          await browser.bookmarks.create({
-            parentId: folderId,
-            title: tab.title,
-            url: tab.url
-          });
-        }
-      }
-    } else {
-      const desiredBookmarks = new Map();
-      for (const tab of tabsToSave) {
-        desiredBookmarks.set(tab.url, tab.title);
-      }
-
-      for (const bookmark of savedBookmarks) {
-        if (desiredBookmarks.has(bookmark.url)) {
-          desiredBookmarks.delete(bookmark.url);
-        } else {
-          await browser.bookmarks.remove(bookmark.id);
-        }
-      }
-
-      for (const [url, title] of desiredBookmarks) {
-        await browser.bookmarks.create({
-          parentId: folderId,
-          title: title,
-          url: url
-        });
-      }
-    }
+    await upsertBookmarks(folderId, tabsToSave, overwrite);
 
     console.log(`Successfully saved ${tabsToSave.length} tabs`);
   } catch (error) {
@@ -283,6 +371,10 @@ async function saveTabsToFolder(folderId, options, tabsQuery = {}) {
     throw error;
   }
 }
+
+/******************************************************************************
+ * Auto-Save Functionality
+ ******************************************************************************/
 
 /**
  * Handle alarm events
@@ -304,7 +396,7 @@ async function handleAlarm(alarm) {
 
     const autoSaveRootFolderPreference = options.get('autosaverootfolder') || 'default';
     const customAutoSaveFolderId = options.get('customautosaverootfolder');
-    const rootFolderId = getRootFolderId(autoSaveRootFolderPreference, customAutoSaveFolderId);
+    const rootFolderId = await getRootFolderId(autoSaveRootFolderPreference, customAutoSaveFolderId);
     
     console.log('Auto-save root folder preference:', autoSaveRootFolderPreference);
     console.log('Custom auto-save folder ID:', customAutoSaveFolderId);
@@ -320,12 +412,7 @@ async function handleAlarm(alarm) {
     await saveTabsToFolder(folderId, options, {});
 
     const allTabs = await browser.tabs.query({});
-    const savepinned = options.get('savepinned') || false;
-    const tabsToSave = allTabs.filter(tab => {
-      if (tab.pinned && !savepinned) return false;
-      if (isNewTabUrl(tab.url)) return false;
-      return true;
-    });
+    const tabsToSave = filterSavableTabs(allTabs, options);
     
     const statsData = await browser.storage.local.get("stats");
     const stats = statsData.stats || {
@@ -380,6 +467,332 @@ async function initializeAlarms() {
 }
 
 /**
+ * Ensure alarms exist without relying on startup events.
+ * MV3 service workers may wake at arbitrary times, so we
+ * recreate alarms when the worker is alive and they are missing.
+ */
+async function restoreAlarmsIfNeeded() {
+  try {
+    const existing = await browser.alarms.getAll();
+    if (existing && existing.length > 0) {
+      return;
+    }
+
+    console.log('No alarms found, attempting restore');
+    await initializeAlarms();
+  } catch (error) {
+    console.error('Error restoring alarms:', error);
+  }
+}
+
+/******************************************************************************
+ * Context Menu Functionality
+ ******************************************************************************/
+
+/**
+ * Create context menus on startup
+ */
+async function createContextMenus() {
+  const isFirefox = await isFirefoxBrowser();
+  if (!isFirefox) {
+    // Context menus not supported in Chrome
+    return;
+  }
+  
+  // Check if contextMenus API is available
+  if (!browser.contextMenus) {
+    console.log("contextMenus API not available");
+    return;
+  }
+  
+  try {
+    await browser.contextMenus.removeAll();
+
+    // Parent menu
+    await browser.contextMenus.create({
+      id: "save-my-tabs-folder",
+      title: "Save My Tabs",
+      contexts: ["bookmark"]
+    });
+
+    // Save current tab
+    await browser.contextMenus.create({
+      id: "save-current-tab",
+      parentId: "save-my-tabs-folder",
+      title: "Save Current Tab",
+      contexts: ["bookmark"],
+      icons: {
+        "16": "icons/file.svg" 
+      }      
+    });
+
+    // Save current window
+    await browser.contextMenus.create({
+      id: "save-current-window",
+      parentId: "save-my-tabs-folder",
+      title: "Save Current Window",
+      contexts: ["bookmark"],
+      icons: {
+        "16": "icons/window.svg" 
+      }      
+    });
+
+    // Save all windows
+    await browser.contextMenus.create({
+      id: "save-all-windows",
+      parentId: "save-my-tabs-folder",
+      title: "Save All Windows",
+      contexts: ["bookmark"],
+      icons: {
+        "16": "icons/window-stack.svg" 
+      }      
+    });
+
+    // Separator
+    await browser.contextMenus.create({
+      id: "separator",
+      parentId: "save-my-tabs-folder",
+      type: "separator",
+      contexts: ["bookmark"]
+    });
+
+    // Open links in named window
+    await browser.contextMenus.create({
+      id: "open-in-named-window",
+      parentId: "save-my-tabs-folder",
+      title: "Open Links in Named Window",
+      contexts: ["bookmark"],
+      icons: {
+        "16": "icons/upload.svg" 
+      }      
+    });
+
+    console.log("Context menus created successfully");
+  } catch (error) {
+    console.error("Error creating context menus:", error);
+  }
+}
+
+/**
+ * Handle context menu clicks
+ */
+async function handleContextMenuClick(info, tab) {
+  try {
+    const bookmarkId = info.bookmarkId;
+    
+    if (!bookmarkId) {
+      console.error("No bookmark ID provided");
+      return;
+    }
+
+    const bookmarkNodes = await browser.bookmarks.get(bookmarkId);
+    const bookmark = bookmarkNodes[0];
+
+    if (!bookmark || bookmark.url) {
+      console.log("Not a folder, ignoring");
+      return;
+    }
+
+    console.log(`Context menu action: ${info.menuItemId} on folder: ${bookmark.title}`);
+
+    switch (info.menuItemId) {
+      case "save-current-tab":
+        await saveCurrentTab(bookmarkId, tab);
+        break;
+
+      case "save-current-window":
+        await saveCurrentWindow(bookmarkId, tab);
+        break;
+
+      case "save-all-windows":
+        await saveAllWindows(bookmarkId);
+        break;
+
+      case "open-in-named-window":
+        await openInNamedWindow(bookmarkId, bookmark.title);
+        break;
+    }
+  } catch (error) {
+    console.error("Error handling context menu click:", error);
+  }
+}
+
+/**
+ * Save current tab to folder
+ */
+async function saveCurrentTab(folderId, tab) {
+  try {
+    // If tab is not provided (e.g., from bookmark context menu), get the active tab
+    if (!tab) {
+      const activeTabs = await browser.tabs.query({ active: true, currentWindow: true });
+      if (activeTabs.length === 0) {
+        console.log("No active tab found");
+        return;
+      }
+      tab = activeTabs[0];
+    }
+
+    if (isNewTabUrl(tab.url)) {
+      console.log("Not saving new tab URL");
+      return;
+    }
+
+    await browser.bookmarks.create({
+      parentId: folderId,
+      title: tab.title,
+      url: tab.url
+    });
+
+    console.log(`Saved current tab to folder ${folderId}`);
+  } catch (error) {
+    console.error("Error saving current tab:", error);
+  }
+}
+
+/**
+ * Save current window to folder
+ */
+async function saveCurrentWindow(folderId, currentTab) {
+  try {
+    const options = await getSavedOptions();
+    const overwrite = options.get('overwrite') || false;
+
+    // If currentTab is not provided (e.g., from bookmark context menu), query current window
+    let allTabs;
+    if (currentTab && currentTab.windowId) {
+      allTabs = await browser.tabs.query({ windowId: currentTab.windowId });
+    } else {
+      allTabs = await browser.tabs.query({ currentWindow: true });
+    }
+
+    const tabsToSave = filterSavableTabs(allTabs, options);
+
+    if (tabsToSave.length === 0) {
+      console.log("No tabs to save");
+      return;
+    }
+
+    await upsertBookmarks(folderId, tabsToSave, overwrite);
+
+    console.log(`Saved ${tabsToSave.length} tabs from current window to folder ${folderId}`);
+  } catch (error) {
+    console.error("Error saving current window:", error);
+  }
+}
+
+/**
+ * Save all windows to folder
+ */
+async function saveAllWindows(folderId) {
+  try {
+    const options = await getSavedOptions();
+    const overwrite = options.get('overwrite') || false;
+
+    const windows = await browser.windows.getAll({ populate: true });
+
+    // Get existing folders in the target folder
+    const existingFolders = await browser.bookmarks.getChildren(folderId);
+    const folderMap = new Map();
+    for (const item of existingFolders) {
+      if (item.url === undefined) {
+        // It's a folder
+        folderMap.set(item.title, item.id);
+      }
+    }
+
+    if (overwrite) {
+      // In overwrite mode, clear all existing folders
+      for (const bookmark of existingFolders) {
+        if (bookmark.url === undefined) {
+          await browser.bookmarks.removeTree(bookmark.id);
+        } else {
+          await browser.bookmarks.remove(bookmark.id);
+        }
+      }
+      folderMap.clear();
+      console.log(`Cleared folder ${folderId} (overwrite mode)`);
+    }
+
+    for (const window of windows) {
+      const windowFolderName = formatWindowFolderName(window);
+
+      // Check if window folder already exists, reuse it if it does
+      let windowFolder;
+      if (folderMap.has(windowFolderName)) {
+        windowFolder = { id: folderMap.get(windowFolderName) };
+        console.log(`Reusing existing window folder: ${windowFolderName}`);
+      } else {
+        windowFolder = await browser.bookmarks.create({
+          parentId: folderId,
+          title: windowFolderName
+        });
+        folderMap.set(windowFolderName, windowFolder.id);
+        console.log(`Created new window folder: ${windowFolderName}`);
+      }
+
+      const tabsToSave = filterSavableTabs(window.tabs, options);
+
+      if (tabsToSave.length === 0) {
+        console.log(`No tabs to save for window ${window.id}`);
+        continue;
+      }
+
+      await upsertBookmarks(windowFolder.id, tabsToSave, overwrite);
+
+      console.log(`Saved ${tabsToSave.length} tabs from window ${window.id}`);
+    }
+
+    console.log(`Saved all windows to folder ${folderId}`);
+  } catch (error) {
+    console.error("Error saving all windows:", error);
+  }
+}
+
+/**
+ * Open all bookmarks from folder in a new named window
+ */
+async function openInNamedWindow(folderId, folderName) {
+  try {
+    const bookmarks = await browser.bookmarks.getChildren(folderId);
+
+    // Get only direct bookmarks (items with URLs), ignore subfolders
+    const urls = bookmarks
+      .filter(bookmark => bookmark.url && !isNewTabUrl(bookmark.url))
+      .map(bookmark => bookmark.url);
+
+    if (urls.length === 0) {
+      console.log("No URLs to open in folder");
+      return;
+    }
+
+    // Create a new window with the first URL
+    const newWindow = await browser.windows.create({
+      url: urls[0]
+    });
+
+    // Add remaining URLs as tabs in the new window
+    for (let i = 1; i < urls.length; i++) {
+      await browser.tabs.create({
+        windowId: newWindow.id,
+        url: urls[i]
+      });
+    }
+
+    // Set the window title preface (Firefox). No-op elsewhere if unsupported.
+    await new Promise(resolve => setTimeout(resolve, 200));
+    await setWindowTitlePrefaceWithRetry(newWindow.id, folderName);
+
+    console.log(`Opened ${urls.length} bookmarks in new window: ${folderName}`);
+  } catch (error) {
+    console.error("Error opening bookmarks in named window:", error);
+  }
+}
+
+/******************************************************************************
+ * Event Handlers
+ ******************************************************************************/
+
+/**
  * Handle storage changes
  */
 function handleStorageChange(changes, areaName) {
@@ -402,11 +815,13 @@ function handleInstalled(details) {
   }
   
   initializeAlarms();
+  createContextMenus();
 }
 
-/**
- * Initialize service worker
- */
+/******************************************************************************
+ * Initialize Service Worker
+ ******************************************************************************/
+
 async function initialize() {
   try {
     console.log('Service worker starting up');
@@ -414,8 +829,24 @@ async function initialize() {
     browser.alarms.onAlarm.addListener(handleAlarm);
     browser.storage.onChanged.addListener(handleStorageChange);
     browser.runtime.onInstalled.addListener(handleInstalled);
+    
+    // Only add context menu listener if API is available
+    if (browser.contextMenus && browser.contextMenus.onClicked) {
+      browser.contextMenus.onClicked.addListener(handleContextMenuClick);
+    }
+    
+    // Lightweight wake triggers: tabs activity can wake the service worker.
+    // Restore alarms/context menus if missing.
+    const wakeRestore = () => {
+      restoreAlarmsIfNeeded();
+      createContextMenus();
+    };
+    browser.tabs.onCreated.addListener(wakeRestore);
+    // browser.tabs.onUpdated.addListener(wakeRestore);
 
     await initializeAlarms();
+    await createContextMenus();
+    await restoreAlarmsIfNeeded();
 
     console.log('Service worker initialized successfully');
   } catch (error) {

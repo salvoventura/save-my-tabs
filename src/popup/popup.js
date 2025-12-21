@@ -509,11 +509,29 @@ const EventHandlers = {
 };
 
 /**
+ * Display version number from manifest
+ */
+function displayVersion() {
+  try {
+    const manifestData = browser.runtime.getManifest();
+    const versionElement = document.querySelector('.version-text');
+    if (versionElement && manifestData.version) {
+      versionElement.textContent = `v${manifestData.version}`;
+    }
+  } catch (error) {
+    console.error("Error getting version:", error);
+  }
+}
+
+/**
  * Initialize popup
  */
 async function initialize() {
   try {
     console.log('Popup initializing');
+
+    // Display version from manifest
+    displayVersion();
 
     // Populate UI
     await PopupUI.populateFolderSelect();

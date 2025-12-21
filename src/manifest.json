@@ -1,46 +1,45 @@
 {
   "manifest_version": 3,
   "name": "Save my tabs!",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Save all open tabs to a bookmark folder",
   "homepage_url": "https://github.com/salvoventura/save-my-tabs",
-
   "icons": {
     "32": "icons/iconfinder_tab_new_raised_18931.png"
   },
-
   "browser_specific_settings": {
     "gecko": {
       "id": "{0d28e91e-0540-46e0-9f78-84bcdb32567c}",
       "data_collection_permissions": {
-        "required": ["none"]
+        "required": [
+          "none"
+        ]
       }
     }
   },
-
   "permissions": [
     "bookmarks",
     "tabs",
     "alarms",
-    "storage"
+    "storage",
+    "contextMenus"
   ],
-
   "background": {
     "service_worker": "background/background.js",
-    "scripts": ["background/background.js"]
+    "scripts": [
+      "background/background.js"
+    ],
+    "type": "module"
   },
-
   "options_ui": {
     "open_in_tab": true,
     "page": "options/options.html"
   },
-
   "action": {
     "default_icon": "icons/iconfinder_tab_new_raised_18931.png",
     "default_title": "Save my tabs!",
     "default_popup": "popup/popup.html"
   },
-
   "commands": {
     "_execute_action": {
       "suggested_key": {
