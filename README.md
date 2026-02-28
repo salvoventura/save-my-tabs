@@ -98,6 +98,24 @@ MyProject/
     └── Tab 5
 ```
 
+## Context Menu (Firefox Only)
+
+In Firefox, you can right-click on any bookmark folder to access Save my Tabs actions directly:
+
+**Save Current Tab**  
+Saves the currently active tab to the selected folder
+
+**Save Current Window**  
+Saves all tabs from the current window to the selected folder
+
+**Save All Windows**  
+Saves tabs from all open windows, organized into subfolders under the selected folder
+
+**Open Links in Named Window**  
+Opens all bookmarks from the folder in a new browser window. The window will be named after the folder for easy identification.
+
+> **Note:** Context menu features are only available in Firefox due to browser API limitations. Chrome and Edge do not support bookmark context menus.
+
 ## Options Panel
 
 On the top right corner of the Save my Tabs popup, you will find a gear icon: click on it and the *Options* panel will open.
@@ -191,6 +209,21 @@ Track your usage in the About tab:
 Statistics can be reset at any time.
 
 ## Version History
+
+### 2.1.1
+- Modified auto-save behavior to match "Save All Windows" button functionality
+  - Auto-save now saves tabs from all open windows instead of just current window
+  - Creates separate subfolders for each window within auto-save date folders
+  - Maintains all existing auto-save settings compatibility
+  - Updates statistics to accurately track tabs and folders across all windows
+
+### 2.1.0
+- Added context menu for Firefox (right-click on bookmark folders)
+  - Save Current Tab - Save the active tab to the selected folder
+  - Save Current Window - Save all tabs from current window to the folder
+  - Save All Windows - Save all windows with per-window organization
+  - Open Links in Named Window - Open all bookmarks from folder in a new named window
+- Context menu features are Firefox-only (not supported in Chrome/Edge)
 
 ### 2.0.1 
 - Bugfix for #21 Auto-save broken in v2.0.0

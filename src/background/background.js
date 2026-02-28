@@ -372,6 +372,81 @@ async function saveTabsToFolder(folderId, options, tabsQuery = {}) {
   }
 }
 
+/**
+ * Save all windows to folder (same behavior as "Save All Windows" button)
+ */
+async function saveAllWindowsToFolder(folderId, options) {
+  try {
+    const overwrite = options.get('overwrite') || false;
+
+    const windows = await browser.windows.getAll({ populate: true });
+
+    // Get existing folders in the target folder
+    const existingFolders = await browser.bookmarks.getChildren(folderId);
+    const folderMap = new Map();
+    for (const item of existingFolders) {
+      if (item.url === undefined) {
+        // It's a folder
+        folderMap.set(item.title, item.id);
+      }
+    }
+
+    if (overwrite) {
+      // In overwrite mode, clear all existing folders
+      for (const bookmark of existingFolders) {
+        if (bookmark.url === undefined) {
+          await browser.bookmarks.removeTree(bookmark.id);
+        } else {
+          await browser.bookmarks.remove(bookmark.id);
+        }
+      }
+      folderMap.clear();
+      console.log(`Cleared folder ${folderId} (overwrite mode)`);
+    }
+
+    let totalTabsSaved = 0;
+    let foldersCreated = 0;
+
+    for (const window of windows) {
+      const windowFolderName = formatWindowFolderName(window);
+
+      // Check if window folder already exists, reuse it if it does
+      let windowFolder;
+      if (folderMap.has(windowFolderName)) {
+        windowFolder = { id: folderMap.get(windowFolderName) };
+        console.log(`Reusing existing window folder: ${windowFolderName}`);
+      } else {
+        windowFolder = await browser.bookmarks.create({
+          parentId: folderId,
+          title: windowFolderName
+        });
+        folderMap.set(windowFolderName, windowFolder.id);
+        foldersCreated++;
+        console.log(`Created new window folder: ${windowFolderName}`);
+      }
+
+      const tabsToSave = filterSavableTabs(window.tabs, options);
+
+      if (tabsToSave.length === 0) {
+        console.log(`No tabs to save for window ${window.id}`);
+        continue;
+      }
+
+      await upsertBookmarks(windowFolder.id, tabsToSave, overwrite);
+      totalTabsSaved += tabsToSave.length;
+
+      console.log(`Saved ${tabsToSave.length} tabs from window ${window.id}`);
+    }
+
+    console.log(`Saved all windows to folder ${folderId}: ${totalTabsSaved} tabs, ${foldersCreated} folders`);
+    
+    return { totalTabsSaved, foldersCreated };
+  } catch (error) {
+    console.error(`Error in saveAllWindowsToFolder: ${error.message}`);
+    throw error;
+  }
+}
+
 /******************************************************************************
  * Auto-Save Functionality
  ******************************************************************************/
@@ -409,7 +484,7 @@ async function handleAlarm(alarm) {
 
     console.log(`Using autosave folder: ${folderName} (${folderId})`);
 
-    await saveTabsToFolder(folderId, options, {});
+    const result = await saveAllWindowsToFolder(folderId, options);
 
     const allTabs = await browser.tabs.query({});
     const tabsToSave = filterSavableTabs(allTabs, options);
@@ -426,7 +501,8 @@ async function handleAlarm(alarm) {
     
     stats.totalSaves = (stats.totalSaves || 0) + 1;
     stats.autoSaves = (stats.autoSaves || 0) + 1;
-    stats.tabsSaved = (stats.tabsSaved || 0) + tabsToSave.length;
+    stats.tabsSaved = (stats.tabsSaved || 0) + result.totalTabsSaved;
+    stats.foldersCreated = (stats.foldersCreated || 0) + result.foldersCreated;
     stats.lastSave = new Date().toISOString();
     
     await browser.storage.local.set({ stats });
